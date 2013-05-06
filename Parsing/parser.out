@@ -1,0 +1,987 @@
+Created by PLY version 3.4 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    STRING
+    WS
+    STRING_START_TRIPLE
+    RBRACE
+    COMMA
+    LBRACE
+    STRING_START_SINGLE
+    NAME
+    NUMBER
+    STRING_END
+    STRING_CONTINUE
+
+Grammar
+
+Rule 0     S' -> file_input
+Rule 1     file_input -> ENDMARKER
+Rule 2     file_input -> file_input_star ENDMARKER
+Rule 3     file_input_star -> NEWLINE
+Rule 4     file_input_star -> stmt
+Rule 5     file_input_star -> file_input_star NEWLINE
+Rule 6     file_input_star -> file_input_star stmt
+Rule 7     funcdef -> DEF STATEMENT COLON suite
+Rule 8     funcdef -> DEF STATEMENT args COLON suite
+Rule 9     classdef -> CLASS STATEMENT COLON suite
+Rule 10    classdef -> CLASS STATEMENT args COLON suite
+Rule 11    conddef -> STATEMENT COLON suite
+Rule 12    conddef -> STATEMENT args COLON suite
+Rule 13    args -> LPAR RPAR
+Rule 14    args -> LPAR stmt RPAR
+Rule 15    args -> stmt
+Rule 16    suite -> stmt
+Rule 17    suite -> NEWLINE INDENT suite_plus DEDENT
+Rule 18    stmt -> STATEMENT
+Rule 19    stmt -> STATEMENT args
+Rule 20    stmt -> STATEMENT NEWLINE
+Rule 21    stmt -> STATEMENT args NEWLINE
+Rule 22    stmt -> funcdef
+Rule 23    stmt -> classdef
+Rule 24    stmt -> conddef
+Rule 25    stmt -> COMMENT
+Rule 26    suite_plus -> stmt
+Rule 27    suite_plus -> suite_plus stmt
+
+Terminals, with rules where they appear
+
+CLASS                : 9 10
+COLON                : 7 8 9 10 11 12
+COMMA                : 
+COMMENT              : 25
+DEDENT               : 17
+DEF                  : 7 8
+ENDMARKER            : 1 2
+INDENT               : 17
+LBRACE               : 
+LPAR                 : 13 14
+NAME                 : 
+NEWLINE              : 3 5 17 20 21
+NUMBER               : 
+RBRACE               : 
+RPAR                 : 13 14
+STATEMENT            : 7 8 9 10 11 12 18 19 20 21
+STRING               : 
+STRING_CONTINUE      : 
+STRING_END           : 
+STRING_START_SINGLE  : 
+STRING_START_TRIPLE  : 
+WS                   : 
+error                : 
+
+Nonterminals, with rules where they appear
+
+args                 : 8 10 12 19 21
+classdef             : 23
+conddef              : 24
+file_input           : 0
+file_input_star      : 2 5 6
+funcdef              : 22
+stmt                 : 4 6 14 15 16 26 27
+suite                : 7 8 9 10 11 12
+suite_plus           : 17 27
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . file_input
+    (1) file_input -> . ENDMARKER
+    (2) file_input -> . file_input_star ENDMARKER
+    (3) file_input_star -> . NEWLINE
+    (4) file_input_star -> . stmt
+    (5) file_input_star -> . file_input_star NEWLINE
+    (6) file_input_star -> . file_input_star stmt
+    (18) stmt -> . STATEMENT
+    (19) stmt -> . STATEMENT args
+    (20) stmt -> . STATEMENT NEWLINE
+    (21) stmt -> . STATEMENT args NEWLINE
+    (22) stmt -> . funcdef
+    (23) stmt -> . classdef
+    (24) stmt -> . conddef
+    (25) stmt -> . COMMENT
+    (7) funcdef -> . DEF STATEMENT COLON suite
+    (8) funcdef -> . DEF STATEMENT args COLON suite
+    (9) classdef -> . CLASS STATEMENT COLON suite
+    (10) classdef -> . CLASS STATEMENT args COLON suite
+    (11) conddef -> . STATEMENT COLON suite
+    (12) conddef -> . STATEMENT args COLON suite
+
+    ENDMARKER       shift and go to state 3
+    NEWLINE         shift and go to state 6
+    STATEMENT       shift and go to state 2
+    COMMENT         shift and go to state 1
+    DEF             shift and go to state 10
+    CLASS           shift and go to state 8
+
+    stmt                           shift and go to state 7
+    conddef                        shift and go to state 9
+    classdef                       shift and go to state 12
+    funcdef                        shift and go to state 4
+    file_input_star                shift and go to state 11
+    file_input                     shift and go to state 5
+
+state 1
+
+    (25) stmt -> COMMENT .
+
+    NEWLINE         reduce using rule 25 (stmt -> COMMENT .)
+    COLON           reduce using rule 25 (stmt -> COMMENT .)
+    ENDMARKER       reduce using rule 25 (stmt -> COMMENT .)
+    STATEMENT       reduce using rule 25 (stmt -> COMMENT .)
+    COMMENT         reduce using rule 25 (stmt -> COMMENT .)
+    DEF             reduce using rule 25 (stmt -> COMMENT .)
+    CLASS           reduce using rule 25 (stmt -> COMMENT .)
+    RPAR            reduce using rule 25 (stmt -> COMMENT .)
+    DEDENT          reduce using rule 25 (stmt -> COMMENT .)
+
+
+state 2
+
+    (18) stmt -> STATEMENT .
+    (19) stmt -> STATEMENT . args
+    (20) stmt -> STATEMENT . NEWLINE
+    (21) stmt -> STATEMENT . args NEWLINE
+    (11) conddef -> STATEMENT . COLON suite
+    (12) conddef -> STATEMENT . args COLON suite
+    (13) args -> . LPAR RPAR
+    (14) args -> . LPAR stmt RPAR
+    (15) args -> . stmt
+    (18) stmt -> . STATEMENT
+    (19) stmt -> . STATEMENT args
+    (20) stmt -> . STATEMENT NEWLINE
+    (21) stmt -> . STATEMENT args NEWLINE
+    (22) stmt -> . funcdef
+    (23) stmt -> . classdef
+    (24) stmt -> . conddef
+    (25) stmt -> . COMMENT
+    (7) funcdef -> . DEF STATEMENT COLON suite
+    (8) funcdef -> . DEF STATEMENT args COLON suite
+    (9) classdef -> . CLASS STATEMENT COLON suite
+    (10) classdef -> . CLASS STATEMENT args COLON suite
+    (11) conddef -> . STATEMENT COLON suite
+    (12) conddef -> . STATEMENT args COLON suite
+
+  ! shift/reduce conflict for NEWLINE resolved as shift
+  ! shift/reduce conflict for COLON resolved as shift
+  ! shift/reduce conflict for STATEMENT resolved as shift
+  ! shift/reduce conflict for COMMENT resolved as shift
+  ! shift/reduce conflict for DEF resolved as shift
+  ! shift/reduce conflict for CLASS resolved as shift
+    ENDMARKER       reduce using rule 18 (stmt -> STATEMENT .)
+    RPAR            reduce using rule 18 (stmt -> STATEMENT .)
+    DEDENT          reduce using rule 18 (stmt -> STATEMENT .)
+    NEWLINE         shift and go to state 14
+    COLON           shift and go to state 17
+    LPAR            shift and go to state 16
+    STATEMENT       shift and go to state 2
+    COMMENT         shift and go to state 1
+    DEF             shift and go to state 10
+    CLASS           shift and go to state 8
+
+  ! NEWLINE         [ reduce using rule 18 (stmt -> STATEMENT .) ]
+  ! COLON           [ reduce using rule 18 (stmt -> STATEMENT .) ]
+  ! STATEMENT       [ reduce using rule 18 (stmt -> STATEMENT .) ]
+  ! COMMENT         [ reduce using rule 18 (stmt -> STATEMENT .) ]
+  ! DEF             [ reduce using rule 18 (stmt -> STATEMENT .) ]
+  ! CLASS           [ reduce using rule 18 (stmt -> STATEMENT .) ]
+
+    stmt                           shift and go to state 15
+    conddef                        shift and go to state 9
+    funcdef                        shift and go to state 4
+    args                           shift and go to state 13
+    classdef                       shift and go to state 12
+
+state 3
+
+    (1) file_input -> ENDMARKER .
+
+    $end            reduce using rule 1 (file_input -> ENDMARKER .)
+
+
+state 4
+
+    (22) stmt -> funcdef .
+
+    NEWLINE         reduce using rule 22 (stmt -> funcdef .)
+    COLON           reduce using rule 22 (stmt -> funcdef .)
+    ENDMARKER       reduce using rule 22 (stmt -> funcdef .)
+    STATEMENT       reduce using rule 22 (stmt -> funcdef .)
+    COMMENT         reduce using rule 22 (stmt -> funcdef .)
+    DEF             reduce using rule 22 (stmt -> funcdef .)
+    CLASS           reduce using rule 22 (stmt -> funcdef .)
+    RPAR            reduce using rule 22 (stmt -> funcdef .)
+    DEDENT          reduce using rule 22 (stmt -> funcdef .)
+
+
+state 5
+
+    (0) S' -> file_input .
+
+
+
+state 6
+
+    (3) file_input_star -> NEWLINE .
+
+    ENDMARKER       reduce using rule 3 (file_input_star -> NEWLINE .)
+    NEWLINE         reduce using rule 3 (file_input_star -> NEWLINE .)
+    STATEMENT       reduce using rule 3 (file_input_star -> NEWLINE .)
+    COMMENT         reduce using rule 3 (file_input_star -> NEWLINE .)
+    DEF             reduce using rule 3 (file_input_star -> NEWLINE .)
+    CLASS           reduce using rule 3 (file_input_star -> NEWLINE .)
+
+
+state 7
+
+    (4) file_input_star -> stmt .
+
+    ENDMARKER       reduce using rule 4 (file_input_star -> stmt .)
+    NEWLINE         reduce using rule 4 (file_input_star -> stmt .)
+    STATEMENT       reduce using rule 4 (file_input_star -> stmt .)
+    COMMENT         reduce using rule 4 (file_input_star -> stmt .)
+    DEF             reduce using rule 4 (file_input_star -> stmt .)
+    CLASS           reduce using rule 4 (file_input_star -> stmt .)
+
+
+state 8
+
+    (9) classdef -> CLASS . STATEMENT COLON suite
+    (10) classdef -> CLASS . STATEMENT args COLON suite
+
+    STATEMENT       shift and go to state 18
+
+
+state 9
+
+    (24) stmt -> conddef .
+
+    NEWLINE         reduce using rule 24 (stmt -> conddef .)
+    COLON           reduce using rule 24 (stmt -> conddef .)
+    ENDMARKER       reduce using rule 24 (stmt -> conddef .)
+    STATEMENT       reduce using rule 24 (stmt -> conddef .)
+    COMMENT         reduce using rule 24 (stmt -> conddef .)
+    DEF             reduce using rule 24 (stmt -> conddef .)
+    CLASS           reduce using rule 24 (stmt -> conddef .)
+    RPAR            reduce using rule 24 (stmt -> conddef .)
+    DEDENT          reduce using rule 24 (stmt -> conddef .)
+
+
+state 10
+
+    (7) funcdef -> DEF . STATEMENT COLON suite
+    (8) funcdef -> DEF . STATEMENT args COLON suite
+
+    STATEMENT       shift and go to state 19
+
+
+state 11
+
+    (2) file_input -> file_input_star . ENDMARKER
+    (5) file_input_star -> file_input_star . NEWLINE
+    (6) file_input_star -> file_input_star . stmt
+    (18) stmt -> . STATEMENT
+    (19) stmt -> . STATEMENT args
+    (20) stmt -> . STATEMENT NEWLINE
+    (21) stmt -> . STATEMENT args NEWLINE
+    (22) stmt -> . funcdef
+    (23) stmt -> . classdef
+    (24) stmt -> . conddef
+    (25) stmt -> . COMMENT
+    (7) funcdef -> . DEF STATEMENT COLON suite
+    (8) funcdef -> . DEF STATEMENT args COLON suite
+    (9) classdef -> . CLASS STATEMENT COLON suite
+    (10) classdef -> . CLASS STATEMENT args COLON suite
+    (11) conddef -> . STATEMENT COLON suite
+    (12) conddef -> . STATEMENT args COLON suite
+
+    ENDMARKER       shift and go to state 20
+    NEWLINE         shift and go to state 21
+    STATEMENT       shift and go to state 2
+    COMMENT         shift and go to state 1
+    DEF             shift and go to state 10
+    CLASS           shift and go to state 8
+
+    stmt                           shift and go to state 22
+    conddef                        shift and go to state 9
+    funcdef                        shift and go to state 4
+    classdef                       shift and go to state 12
+
+state 12
+
+    (23) stmt -> classdef .
+
+    NEWLINE         reduce using rule 23 (stmt -> classdef .)
+    COLON           reduce using rule 23 (stmt -> classdef .)
+    ENDMARKER       reduce using rule 23 (stmt -> classdef .)
+    STATEMENT       reduce using rule 23 (stmt -> classdef .)
+    COMMENT         reduce using rule 23 (stmt -> classdef .)
+    DEF             reduce using rule 23 (stmt -> classdef .)
+    CLASS           reduce using rule 23 (stmt -> classdef .)
+    RPAR            reduce using rule 23 (stmt -> classdef .)
+    DEDENT          reduce using rule 23 (stmt -> classdef .)
+
+
+state 13
+
+    (19) stmt -> STATEMENT args .
+    (21) stmt -> STATEMENT args . NEWLINE
+    (12) conddef -> STATEMENT args . COLON suite
+
+  ! shift/reduce conflict for NEWLINE resolved as shift
+  ! shift/reduce conflict for COLON resolved as shift
+    ENDMARKER       reduce using rule 19 (stmt -> STATEMENT args .)
+    STATEMENT       reduce using rule 19 (stmt -> STATEMENT args .)
+    COMMENT         reduce using rule 19 (stmt -> STATEMENT args .)
+    DEF             reduce using rule 19 (stmt -> STATEMENT args .)
+    CLASS           reduce using rule 19 (stmt -> STATEMENT args .)
+    RPAR            reduce using rule 19 (stmt -> STATEMENT args .)
+    DEDENT          reduce using rule 19 (stmt -> STATEMENT args .)
+    NEWLINE         shift and go to state 23
+    COLON           shift and go to state 24
+
+  ! NEWLINE         [ reduce using rule 19 (stmt -> STATEMENT args .) ]
+  ! COLON           [ reduce using rule 19 (stmt -> STATEMENT args .) ]
+
+
+state 14
+
+    (20) stmt -> STATEMENT NEWLINE .
+
+    NEWLINE         reduce using rule 20 (stmt -> STATEMENT NEWLINE .)
+    COLON           reduce using rule 20 (stmt -> STATEMENT NEWLINE .)
+    ENDMARKER       reduce using rule 20 (stmt -> STATEMENT NEWLINE .)
+    STATEMENT       reduce using rule 20 (stmt -> STATEMENT NEWLINE .)
+    COMMENT         reduce using rule 20 (stmt -> STATEMENT NEWLINE .)
+    DEF             reduce using rule 20 (stmt -> STATEMENT NEWLINE .)
+    CLASS           reduce using rule 20 (stmt -> STATEMENT NEWLINE .)
+    RPAR            reduce using rule 20 (stmt -> STATEMENT NEWLINE .)
+    DEDENT          reduce using rule 20 (stmt -> STATEMENT NEWLINE .)
+
+
+state 15
+
+    (15) args -> stmt .
+
+    NEWLINE         reduce using rule 15 (args -> stmt .)
+    COLON           reduce using rule 15 (args -> stmt .)
+    ENDMARKER       reduce using rule 15 (args -> stmt .)
+    STATEMENT       reduce using rule 15 (args -> stmt .)
+    COMMENT         reduce using rule 15 (args -> stmt .)
+    DEF             reduce using rule 15 (args -> stmt .)
+    CLASS           reduce using rule 15 (args -> stmt .)
+    RPAR            reduce using rule 15 (args -> stmt .)
+    DEDENT          reduce using rule 15 (args -> stmt .)
+
+
+state 16
+
+    (13) args -> LPAR . RPAR
+    (14) args -> LPAR . stmt RPAR
+    (18) stmt -> . STATEMENT
+    (19) stmt -> . STATEMENT args
+    (20) stmt -> . STATEMENT NEWLINE
+    (21) stmt -> . STATEMENT args NEWLINE
+    (22) stmt -> . funcdef
+    (23) stmt -> . classdef
+    (24) stmt -> . conddef
+    (25) stmt -> . COMMENT
+    (7) funcdef -> . DEF STATEMENT COLON suite
+    (8) funcdef -> . DEF STATEMENT args COLON suite
+    (9) classdef -> . CLASS STATEMENT COLON suite
+    (10) classdef -> . CLASS STATEMENT args COLON suite
+    (11) conddef -> . STATEMENT COLON suite
+    (12) conddef -> . STATEMENT args COLON suite
+
+    RPAR            shift and go to state 25
+    STATEMENT       shift and go to state 2
+    COMMENT         shift and go to state 1
+    DEF             shift and go to state 10
+    CLASS           shift and go to state 8
+
+    stmt                           shift and go to state 26
+    conddef                        shift and go to state 9
+    funcdef                        shift and go to state 4
+    classdef                       shift and go to state 12
+
+state 17
+
+    (11) conddef -> STATEMENT COLON . suite
+    (16) suite -> . stmt
+    (17) suite -> . NEWLINE INDENT suite_plus DEDENT
+    (18) stmt -> . STATEMENT
+    (19) stmt -> . STATEMENT args
+    (20) stmt -> . STATEMENT NEWLINE
+    (21) stmt -> . STATEMENT args NEWLINE
+    (22) stmt -> . funcdef
+    (23) stmt -> . classdef
+    (24) stmt -> . conddef
+    (25) stmt -> . COMMENT
+    (7) funcdef -> . DEF STATEMENT COLON suite
+    (8) funcdef -> . DEF STATEMENT args COLON suite
+    (9) classdef -> . CLASS STATEMENT COLON suite
+    (10) classdef -> . CLASS STATEMENT args COLON suite
+    (11) conddef -> . STATEMENT COLON suite
+    (12) conddef -> . STATEMENT args COLON suite
+
+    NEWLINE         shift and go to state 27
+    STATEMENT       shift and go to state 2
+    COMMENT         shift and go to state 1
+    DEF             shift and go to state 10
+    CLASS           shift and go to state 8
+
+    stmt                           shift and go to state 28
+    conddef                        shift and go to state 9
+    funcdef                        shift and go to state 4
+    suite                          shift and go to state 29
+    classdef                       shift and go to state 12
+
+state 18
+
+    (9) classdef -> CLASS STATEMENT . COLON suite
+    (10) classdef -> CLASS STATEMENT . args COLON suite
+    (13) args -> . LPAR RPAR
+    (14) args -> . LPAR stmt RPAR
+    (15) args -> . stmt
+    (18) stmt -> . STATEMENT
+    (19) stmt -> . STATEMENT args
+    (20) stmt -> . STATEMENT NEWLINE
+    (21) stmt -> . STATEMENT args NEWLINE
+    (22) stmt -> . funcdef
+    (23) stmt -> . classdef
+    (24) stmt -> . conddef
+    (25) stmt -> . COMMENT
+    (7) funcdef -> . DEF STATEMENT COLON suite
+    (8) funcdef -> . DEF STATEMENT args COLON suite
+    (9) classdef -> . CLASS STATEMENT COLON suite
+    (10) classdef -> . CLASS STATEMENT args COLON suite
+    (11) conddef -> . STATEMENT COLON suite
+    (12) conddef -> . STATEMENT args COLON suite
+
+    COLON           shift and go to state 31
+    LPAR            shift and go to state 16
+    STATEMENT       shift and go to state 2
+    COMMENT         shift and go to state 1
+    DEF             shift and go to state 10
+    CLASS           shift and go to state 8
+
+    stmt                           shift and go to state 15
+    conddef                        shift and go to state 9
+    funcdef                        shift and go to state 4
+    classdef                       shift and go to state 12
+    args                           shift and go to state 30
+
+state 19
+
+    (7) funcdef -> DEF STATEMENT . COLON suite
+    (8) funcdef -> DEF STATEMENT . args COLON suite
+    (13) args -> . LPAR RPAR
+    (14) args -> . LPAR stmt RPAR
+    (15) args -> . stmt
+    (18) stmt -> . STATEMENT
+    (19) stmt -> . STATEMENT args
+    (20) stmt -> . STATEMENT NEWLINE
+    (21) stmt -> . STATEMENT args NEWLINE
+    (22) stmt -> . funcdef
+    (23) stmt -> . classdef
+    (24) stmt -> . conddef
+    (25) stmt -> . COMMENT
+    (7) funcdef -> . DEF STATEMENT COLON suite
+    (8) funcdef -> . DEF STATEMENT args COLON suite
+    (9) classdef -> . CLASS STATEMENT COLON suite
+    (10) classdef -> . CLASS STATEMENT args COLON suite
+    (11) conddef -> . STATEMENT COLON suite
+    (12) conddef -> . STATEMENT args COLON suite
+
+    COLON           shift and go to state 33
+    LPAR            shift and go to state 16
+    STATEMENT       shift and go to state 2
+    COMMENT         shift and go to state 1
+    DEF             shift and go to state 10
+    CLASS           shift and go to state 8
+
+    stmt                           shift and go to state 15
+    conddef                        shift and go to state 9
+    funcdef                        shift and go to state 4
+    classdef                       shift and go to state 12
+    args                           shift and go to state 32
+
+state 20
+
+    (2) file_input -> file_input_star ENDMARKER .
+
+    $end            reduce using rule 2 (file_input -> file_input_star ENDMARKER .)
+
+
+state 21
+
+    (5) file_input_star -> file_input_star NEWLINE .
+
+    ENDMARKER       reduce using rule 5 (file_input_star -> file_input_star NEWLINE .)
+    NEWLINE         reduce using rule 5 (file_input_star -> file_input_star NEWLINE .)
+    STATEMENT       reduce using rule 5 (file_input_star -> file_input_star NEWLINE .)
+    COMMENT         reduce using rule 5 (file_input_star -> file_input_star NEWLINE .)
+    DEF             reduce using rule 5 (file_input_star -> file_input_star NEWLINE .)
+    CLASS           reduce using rule 5 (file_input_star -> file_input_star NEWLINE .)
+
+
+state 22
+
+    (6) file_input_star -> file_input_star stmt .
+
+    ENDMARKER       reduce using rule 6 (file_input_star -> file_input_star stmt .)
+    NEWLINE         reduce using rule 6 (file_input_star -> file_input_star stmt .)
+    STATEMENT       reduce using rule 6 (file_input_star -> file_input_star stmt .)
+    COMMENT         reduce using rule 6 (file_input_star -> file_input_star stmt .)
+    DEF             reduce using rule 6 (file_input_star -> file_input_star stmt .)
+    CLASS           reduce using rule 6 (file_input_star -> file_input_star stmt .)
+
+
+state 23
+
+    (21) stmt -> STATEMENT args NEWLINE .
+
+    NEWLINE         reduce using rule 21 (stmt -> STATEMENT args NEWLINE .)
+    COLON           reduce using rule 21 (stmt -> STATEMENT args NEWLINE .)
+    ENDMARKER       reduce using rule 21 (stmt -> STATEMENT args NEWLINE .)
+    STATEMENT       reduce using rule 21 (stmt -> STATEMENT args NEWLINE .)
+    COMMENT         reduce using rule 21 (stmt -> STATEMENT args NEWLINE .)
+    DEF             reduce using rule 21 (stmt -> STATEMENT args NEWLINE .)
+    CLASS           reduce using rule 21 (stmt -> STATEMENT args NEWLINE .)
+    RPAR            reduce using rule 21 (stmt -> STATEMENT args NEWLINE .)
+    DEDENT          reduce using rule 21 (stmt -> STATEMENT args NEWLINE .)
+
+
+state 24
+
+    (12) conddef -> STATEMENT args COLON . suite
+    (16) suite -> . stmt
+    (17) suite -> . NEWLINE INDENT suite_plus DEDENT
+    (18) stmt -> . STATEMENT
+    (19) stmt -> . STATEMENT args
+    (20) stmt -> . STATEMENT NEWLINE
+    (21) stmt -> . STATEMENT args NEWLINE
+    (22) stmt -> . funcdef
+    (23) stmt -> . classdef
+    (24) stmt -> . conddef
+    (25) stmt -> . COMMENT
+    (7) funcdef -> . DEF STATEMENT COLON suite
+    (8) funcdef -> . DEF STATEMENT args COLON suite
+    (9) classdef -> . CLASS STATEMENT COLON suite
+    (10) classdef -> . CLASS STATEMENT args COLON suite
+    (11) conddef -> . STATEMENT COLON suite
+    (12) conddef -> . STATEMENT args COLON suite
+
+    NEWLINE         shift and go to state 27
+    STATEMENT       shift and go to state 2
+    COMMENT         shift and go to state 1
+    DEF             shift and go to state 10
+    CLASS           shift and go to state 8
+
+    stmt                           shift and go to state 28
+    conddef                        shift and go to state 9
+    funcdef                        shift and go to state 4
+    classdef                       shift and go to state 12
+    suite                          shift and go to state 34
+
+state 25
+
+    (13) args -> LPAR RPAR .
+
+    NEWLINE         reduce using rule 13 (args -> LPAR RPAR .)
+    COLON           reduce using rule 13 (args -> LPAR RPAR .)
+    ENDMARKER       reduce using rule 13 (args -> LPAR RPAR .)
+    STATEMENT       reduce using rule 13 (args -> LPAR RPAR .)
+    COMMENT         reduce using rule 13 (args -> LPAR RPAR .)
+    DEF             reduce using rule 13 (args -> LPAR RPAR .)
+    CLASS           reduce using rule 13 (args -> LPAR RPAR .)
+    RPAR            reduce using rule 13 (args -> LPAR RPAR .)
+    DEDENT          reduce using rule 13 (args -> LPAR RPAR .)
+
+
+state 26
+
+    (14) args -> LPAR stmt . RPAR
+
+    RPAR            shift and go to state 35
+
+
+state 27
+
+    (17) suite -> NEWLINE . INDENT suite_plus DEDENT
+
+    INDENT          shift and go to state 36
+
+
+state 28
+
+    (16) suite -> stmt .
+
+    NEWLINE         reduce using rule 16 (suite -> stmt .)
+    COLON           reduce using rule 16 (suite -> stmt .)
+    ENDMARKER       reduce using rule 16 (suite -> stmt .)
+    STATEMENT       reduce using rule 16 (suite -> stmt .)
+    COMMENT         reduce using rule 16 (suite -> stmt .)
+    DEF             reduce using rule 16 (suite -> stmt .)
+    CLASS           reduce using rule 16 (suite -> stmt .)
+    RPAR            reduce using rule 16 (suite -> stmt .)
+    DEDENT          reduce using rule 16 (suite -> stmt .)
+
+
+state 29
+
+    (11) conddef -> STATEMENT COLON suite .
+
+    NEWLINE         reduce using rule 11 (conddef -> STATEMENT COLON suite .)
+    COLON           reduce using rule 11 (conddef -> STATEMENT COLON suite .)
+    ENDMARKER       reduce using rule 11 (conddef -> STATEMENT COLON suite .)
+    STATEMENT       reduce using rule 11 (conddef -> STATEMENT COLON suite .)
+    COMMENT         reduce using rule 11 (conddef -> STATEMENT COLON suite .)
+    DEF             reduce using rule 11 (conddef -> STATEMENT COLON suite .)
+    CLASS           reduce using rule 11 (conddef -> STATEMENT COLON suite .)
+    RPAR            reduce using rule 11 (conddef -> STATEMENT COLON suite .)
+    DEDENT          reduce using rule 11 (conddef -> STATEMENT COLON suite .)
+
+
+state 30
+
+    (10) classdef -> CLASS STATEMENT args . COLON suite
+
+    COLON           shift and go to state 37
+
+
+state 31
+
+    (9) classdef -> CLASS STATEMENT COLON . suite
+    (16) suite -> . stmt
+    (17) suite -> . NEWLINE INDENT suite_plus DEDENT
+    (18) stmt -> . STATEMENT
+    (19) stmt -> . STATEMENT args
+    (20) stmt -> . STATEMENT NEWLINE
+    (21) stmt -> . STATEMENT args NEWLINE
+    (22) stmt -> . funcdef
+    (23) stmt -> . classdef
+    (24) stmt -> . conddef
+    (25) stmt -> . COMMENT
+    (7) funcdef -> . DEF STATEMENT COLON suite
+    (8) funcdef -> . DEF STATEMENT args COLON suite
+    (9) classdef -> . CLASS STATEMENT COLON suite
+    (10) classdef -> . CLASS STATEMENT args COLON suite
+    (11) conddef -> . STATEMENT COLON suite
+    (12) conddef -> . STATEMENT args COLON suite
+
+    NEWLINE         shift and go to state 27
+    STATEMENT       shift and go to state 2
+    COMMENT         shift and go to state 1
+    DEF             shift and go to state 10
+    CLASS           shift and go to state 8
+
+    stmt                           shift and go to state 28
+    conddef                        shift and go to state 9
+    funcdef                        shift and go to state 4
+    suite                          shift and go to state 38
+    classdef                       shift and go to state 12
+
+state 32
+
+    (8) funcdef -> DEF STATEMENT args . COLON suite
+
+    COLON           shift and go to state 39
+
+
+state 33
+
+    (7) funcdef -> DEF STATEMENT COLON . suite
+    (16) suite -> . stmt
+    (17) suite -> . NEWLINE INDENT suite_plus DEDENT
+    (18) stmt -> . STATEMENT
+    (19) stmt -> . STATEMENT args
+    (20) stmt -> . STATEMENT NEWLINE
+    (21) stmt -> . STATEMENT args NEWLINE
+    (22) stmt -> . funcdef
+    (23) stmt -> . classdef
+    (24) stmt -> . conddef
+    (25) stmt -> . COMMENT
+    (7) funcdef -> . DEF STATEMENT COLON suite
+    (8) funcdef -> . DEF STATEMENT args COLON suite
+    (9) classdef -> . CLASS STATEMENT COLON suite
+    (10) classdef -> . CLASS STATEMENT args COLON suite
+    (11) conddef -> . STATEMENT COLON suite
+    (12) conddef -> . STATEMENT args COLON suite
+
+    NEWLINE         shift and go to state 27
+    STATEMENT       shift and go to state 2
+    COMMENT         shift and go to state 1
+    DEF             shift and go to state 10
+    CLASS           shift and go to state 8
+
+    stmt                           shift and go to state 28
+    conddef                        shift and go to state 9
+    funcdef                        shift and go to state 4
+    suite                          shift and go to state 40
+    classdef                       shift and go to state 12
+
+state 34
+
+    (12) conddef -> STATEMENT args COLON suite .
+
+    NEWLINE         reduce using rule 12 (conddef -> STATEMENT args COLON suite .)
+    COLON           reduce using rule 12 (conddef -> STATEMENT args COLON suite .)
+    ENDMARKER       reduce using rule 12 (conddef -> STATEMENT args COLON suite .)
+    STATEMENT       reduce using rule 12 (conddef -> STATEMENT args COLON suite .)
+    COMMENT         reduce using rule 12 (conddef -> STATEMENT args COLON suite .)
+    DEF             reduce using rule 12 (conddef -> STATEMENT args COLON suite .)
+    CLASS           reduce using rule 12 (conddef -> STATEMENT args COLON suite .)
+    RPAR            reduce using rule 12 (conddef -> STATEMENT args COLON suite .)
+    DEDENT          reduce using rule 12 (conddef -> STATEMENT args COLON suite .)
+
+
+state 35
+
+    (14) args -> LPAR stmt RPAR .
+
+    NEWLINE         reduce using rule 14 (args -> LPAR stmt RPAR .)
+    COLON           reduce using rule 14 (args -> LPAR stmt RPAR .)
+    ENDMARKER       reduce using rule 14 (args -> LPAR stmt RPAR .)
+    STATEMENT       reduce using rule 14 (args -> LPAR stmt RPAR .)
+    COMMENT         reduce using rule 14 (args -> LPAR stmt RPAR .)
+    DEF             reduce using rule 14 (args -> LPAR stmt RPAR .)
+    CLASS           reduce using rule 14 (args -> LPAR stmt RPAR .)
+    RPAR            reduce using rule 14 (args -> LPAR stmt RPAR .)
+    DEDENT          reduce using rule 14 (args -> LPAR stmt RPAR .)
+
+
+state 36
+
+    (17) suite -> NEWLINE INDENT . suite_plus DEDENT
+    (26) suite_plus -> . stmt
+    (27) suite_plus -> . suite_plus stmt
+    (18) stmt -> . STATEMENT
+    (19) stmt -> . STATEMENT args
+    (20) stmt -> . STATEMENT NEWLINE
+    (21) stmt -> . STATEMENT args NEWLINE
+    (22) stmt -> . funcdef
+    (23) stmt -> . classdef
+    (24) stmt -> . conddef
+    (25) stmt -> . COMMENT
+    (7) funcdef -> . DEF STATEMENT COLON suite
+    (8) funcdef -> . DEF STATEMENT args COLON suite
+    (9) classdef -> . CLASS STATEMENT COLON suite
+    (10) classdef -> . CLASS STATEMENT args COLON suite
+    (11) conddef -> . STATEMENT COLON suite
+    (12) conddef -> . STATEMENT args COLON suite
+
+    STATEMENT       shift and go to state 2
+    COMMENT         shift and go to state 1
+    DEF             shift and go to state 10
+    CLASS           shift and go to state 8
+
+    stmt                           shift and go to state 41
+    conddef                        shift and go to state 9
+    suite_plus                     shift and go to state 42
+    funcdef                        shift and go to state 4
+    classdef                       shift and go to state 12
+
+state 37
+
+    (10) classdef -> CLASS STATEMENT args COLON . suite
+    (16) suite -> . stmt
+    (17) suite -> . NEWLINE INDENT suite_plus DEDENT
+    (18) stmt -> . STATEMENT
+    (19) stmt -> . STATEMENT args
+    (20) stmt -> . STATEMENT NEWLINE
+    (21) stmt -> . STATEMENT args NEWLINE
+    (22) stmt -> . funcdef
+    (23) stmt -> . classdef
+    (24) stmt -> . conddef
+    (25) stmt -> . COMMENT
+    (7) funcdef -> . DEF STATEMENT COLON suite
+    (8) funcdef -> . DEF STATEMENT args COLON suite
+    (9) classdef -> . CLASS STATEMENT COLON suite
+    (10) classdef -> . CLASS STATEMENT args COLON suite
+    (11) conddef -> . STATEMENT COLON suite
+    (12) conddef -> . STATEMENT args COLON suite
+
+    NEWLINE         shift and go to state 27
+    STATEMENT       shift and go to state 2
+    COMMENT         shift and go to state 1
+    DEF             shift and go to state 10
+    CLASS           shift and go to state 8
+
+    stmt                           shift and go to state 28
+    conddef                        shift and go to state 9
+    funcdef                        shift and go to state 4
+    classdef                       shift and go to state 12
+    suite                          shift and go to state 43
+
+state 38
+
+    (9) classdef -> CLASS STATEMENT COLON suite .
+
+    NEWLINE         reduce using rule 9 (classdef -> CLASS STATEMENT COLON suite .)
+    COLON           reduce using rule 9 (classdef -> CLASS STATEMENT COLON suite .)
+    ENDMARKER       reduce using rule 9 (classdef -> CLASS STATEMENT COLON suite .)
+    STATEMENT       reduce using rule 9 (classdef -> CLASS STATEMENT COLON suite .)
+    COMMENT         reduce using rule 9 (classdef -> CLASS STATEMENT COLON suite .)
+    DEF             reduce using rule 9 (classdef -> CLASS STATEMENT COLON suite .)
+    CLASS           reduce using rule 9 (classdef -> CLASS STATEMENT COLON suite .)
+    RPAR            reduce using rule 9 (classdef -> CLASS STATEMENT COLON suite .)
+    DEDENT          reduce using rule 9 (classdef -> CLASS STATEMENT COLON suite .)
+
+
+state 39
+
+    (8) funcdef -> DEF STATEMENT args COLON . suite
+    (16) suite -> . stmt
+    (17) suite -> . NEWLINE INDENT suite_plus DEDENT
+    (18) stmt -> . STATEMENT
+    (19) stmt -> . STATEMENT args
+    (20) stmt -> . STATEMENT NEWLINE
+    (21) stmt -> . STATEMENT args NEWLINE
+    (22) stmt -> . funcdef
+    (23) stmt -> . classdef
+    (24) stmt -> . conddef
+    (25) stmt -> . COMMENT
+    (7) funcdef -> . DEF STATEMENT COLON suite
+    (8) funcdef -> . DEF STATEMENT args COLON suite
+    (9) classdef -> . CLASS STATEMENT COLON suite
+    (10) classdef -> . CLASS STATEMENT args COLON suite
+    (11) conddef -> . STATEMENT COLON suite
+    (12) conddef -> . STATEMENT args COLON suite
+
+    NEWLINE         shift and go to state 27
+    STATEMENT       shift and go to state 2
+    COMMENT         shift and go to state 1
+    DEF             shift and go to state 10
+    CLASS           shift and go to state 8
+
+    stmt                           shift and go to state 28
+    conddef                        shift and go to state 9
+    funcdef                        shift and go to state 4
+    classdef                       shift and go to state 12
+    suite                          shift and go to state 44
+
+state 40
+
+    (7) funcdef -> DEF STATEMENT COLON suite .
+
+    NEWLINE         reduce using rule 7 (funcdef -> DEF STATEMENT COLON suite .)
+    COLON           reduce using rule 7 (funcdef -> DEF STATEMENT COLON suite .)
+    ENDMARKER       reduce using rule 7 (funcdef -> DEF STATEMENT COLON suite .)
+    STATEMENT       reduce using rule 7 (funcdef -> DEF STATEMENT COLON suite .)
+    COMMENT         reduce using rule 7 (funcdef -> DEF STATEMENT COLON suite .)
+    DEF             reduce using rule 7 (funcdef -> DEF STATEMENT COLON suite .)
+    CLASS           reduce using rule 7 (funcdef -> DEF STATEMENT COLON suite .)
+    RPAR            reduce using rule 7 (funcdef -> DEF STATEMENT COLON suite .)
+    DEDENT          reduce using rule 7 (funcdef -> DEF STATEMENT COLON suite .)
+
+
+state 41
+
+    (26) suite_plus -> stmt .
+
+    DEDENT          reduce using rule 26 (suite_plus -> stmt .)
+    STATEMENT       reduce using rule 26 (suite_plus -> stmt .)
+    COMMENT         reduce using rule 26 (suite_plus -> stmt .)
+    DEF             reduce using rule 26 (suite_plus -> stmt .)
+    CLASS           reduce using rule 26 (suite_plus -> stmt .)
+
+
+state 42
+
+    (17) suite -> NEWLINE INDENT suite_plus . DEDENT
+    (27) suite_plus -> suite_plus . stmt
+    (18) stmt -> . STATEMENT
+    (19) stmt -> . STATEMENT args
+    (20) stmt -> . STATEMENT NEWLINE
+    (21) stmt -> . STATEMENT args NEWLINE
+    (22) stmt -> . funcdef
+    (23) stmt -> . classdef
+    (24) stmt -> . conddef
+    (25) stmt -> . COMMENT
+    (7) funcdef -> . DEF STATEMENT COLON suite
+    (8) funcdef -> . DEF STATEMENT args COLON suite
+    (9) classdef -> . CLASS STATEMENT COLON suite
+    (10) classdef -> . CLASS STATEMENT args COLON suite
+    (11) conddef -> . STATEMENT COLON suite
+    (12) conddef -> . STATEMENT args COLON suite
+
+    DEDENT          shift and go to state 45
+    STATEMENT       shift and go to state 2
+    COMMENT         shift and go to state 1
+    DEF             shift and go to state 10
+    CLASS           shift and go to state 8
+
+    stmt                           shift and go to state 46
+    conddef                        shift and go to state 9
+    funcdef                        shift and go to state 4
+    classdef                       shift and go to state 12
+
+state 43
+
+    (10) classdef -> CLASS STATEMENT args COLON suite .
+
+    NEWLINE         reduce using rule 10 (classdef -> CLASS STATEMENT args COLON suite .)
+    COLON           reduce using rule 10 (classdef -> CLASS STATEMENT args COLON suite .)
+    ENDMARKER       reduce using rule 10 (classdef -> CLASS STATEMENT args COLON suite .)
+    STATEMENT       reduce using rule 10 (classdef -> CLASS STATEMENT args COLON suite .)
+    COMMENT         reduce using rule 10 (classdef -> CLASS STATEMENT args COLON suite .)
+    DEF             reduce using rule 10 (classdef -> CLASS STATEMENT args COLON suite .)
+    CLASS           reduce using rule 10 (classdef -> CLASS STATEMENT args COLON suite .)
+    RPAR            reduce using rule 10 (classdef -> CLASS STATEMENT args COLON suite .)
+    DEDENT          reduce using rule 10 (classdef -> CLASS STATEMENT args COLON suite .)
+
+
+state 44
+
+    (8) funcdef -> DEF STATEMENT args COLON suite .
+
+    NEWLINE         reduce using rule 8 (funcdef -> DEF STATEMENT args COLON suite .)
+    COLON           reduce using rule 8 (funcdef -> DEF STATEMENT args COLON suite .)
+    ENDMARKER       reduce using rule 8 (funcdef -> DEF STATEMENT args COLON suite .)
+    STATEMENT       reduce using rule 8 (funcdef -> DEF STATEMENT args COLON suite .)
+    COMMENT         reduce using rule 8 (funcdef -> DEF STATEMENT args COLON suite .)
+    DEF             reduce using rule 8 (funcdef -> DEF STATEMENT args COLON suite .)
+    CLASS           reduce using rule 8 (funcdef -> DEF STATEMENT args COLON suite .)
+    RPAR            reduce using rule 8 (funcdef -> DEF STATEMENT args COLON suite .)
+    DEDENT          reduce using rule 8 (funcdef -> DEF STATEMENT args COLON suite .)
+
+
+state 45
+
+    (17) suite -> NEWLINE INDENT suite_plus DEDENT .
+
+    NEWLINE         reduce using rule 17 (suite -> NEWLINE INDENT suite_plus DEDENT .)
+    COLON           reduce using rule 17 (suite -> NEWLINE INDENT suite_plus DEDENT .)
+    ENDMARKER       reduce using rule 17 (suite -> NEWLINE INDENT suite_plus DEDENT .)
+    STATEMENT       reduce using rule 17 (suite -> NEWLINE INDENT suite_plus DEDENT .)
+    COMMENT         reduce using rule 17 (suite -> NEWLINE INDENT suite_plus DEDENT .)
+    DEF             reduce using rule 17 (suite -> NEWLINE INDENT suite_plus DEDENT .)
+    CLASS           reduce using rule 17 (suite -> NEWLINE INDENT suite_plus DEDENT .)
+    RPAR            reduce using rule 17 (suite -> NEWLINE INDENT suite_plus DEDENT .)
+    DEDENT          reduce using rule 17 (suite -> NEWLINE INDENT suite_plus DEDENT .)
+
+
+state 46
+
+    (27) suite_plus -> suite_plus stmt .
+
+    DEDENT          reduce using rule 27 (suite_plus -> suite_plus stmt .)
+    STATEMENT       reduce using rule 27 (suite_plus -> suite_plus stmt .)
+    COMMENT         reduce using rule 27 (suite_plus -> suite_plus stmt .)
+    DEF             reduce using rule 27 (suite_plus -> suite_plus stmt .)
+    CLASS           reduce using rule 27 (suite_plus -> suite_plus stmt .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for NEWLINE in state 2 resolved as shift
+WARNING: shift/reduce conflict for COLON in state 2 resolved as shift
+WARNING: shift/reduce conflict for STATEMENT in state 2 resolved as shift
+WARNING: shift/reduce conflict for COMMENT in state 2 resolved as shift
+WARNING: shift/reduce conflict for DEF in state 2 resolved as shift
+WARNING: shift/reduce conflict for CLASS in state 2 resolved as shift
+WARNING: shift/reduce conflict for NEWLINE in state 13 resolved as shift
+WARNING: shift/reduce conflict for COLON in state 13 resolved as shift
