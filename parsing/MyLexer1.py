@@ -363,6 +363,10 @@ def add_endmarker(token_stream):
     yield _new_token("ENDMARKER", "end",lineno)
 _add_endmarker = add_endmarker
 
+def mod_values(token_stream):
+    for tok in token_stream:
+        yield _new_token(tok.type, tok, tok.lineno)
+
 def make_token_stream(lexer, add_endmarker = True):
     token_stream = iter(lexer.token, None)
     token_stream = create_strings(lexer, token_stream)
@@ -370,6 +374,7 @@ def make_token_stream(lexer, add_endmarker = True):
     token_stream = synthesize_indentation_tokens(token_stream)
     if add_endmarker:
         token_stream = _add_endmarker(token_stream)
+    token_stream=mod_values(token_stream)
     return token_stream
 
 

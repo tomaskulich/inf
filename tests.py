@@ -1,21 +1,22 @@
 import unittest
 import ast
 import logging
-from parse_ast import Parser
+#from parse_ast import Parser
+#from typez import extern_scope
 from  typez import (
         Scope,
         Typez,
-        extern_scope
+        none_type
         )
 
 
-pr_num=Typez(kind='prim', node=ast.Num())
-pr_str=Typez(kind='prim', node=ast.Str())
 
 class TestResolve(unittest.TestCase): #{{{
 
     def setUp(self):
-        self.scope=Scope(root=True)
+        pr_num=Typez(kind='prim', node=ast.Num())
+        pr_str=Typez(kind='prim', node=ast.Str())
+        self.scope=Scope(is_root=True)
         self.scope.update({'xxx':pr_str})
 
         scope1=Scope(parent=self.scope)
@@ -67,6 +68,45 @@ class TestResolve(unittest.TestCase): #{{{
         self.assertIsInstance(add, Typez)
         self.assertEqual(add.kind, 'func')
         self.assertIsInstance(add.node, ast.FunctionDef)
+
+#}}}
+
+class TestScope(unittest.TestCase): #{{{
+    def test_basic(self):
+        scope=Scope(is_root=True)
+        scope['a']='a'
+        scope['b']='b'
+        scope2=scope.deep_copy()
+        self.assertEqual(scope._scope, scope2._scope)
+        self.assertEqual(scope['a'], 'a')
+        self.assertEqual(scope2['b'], 'b')
+
+    def test_parent(self):
+        par_scope=Scope(is_root=True)
+        par_scope['a']='a'
+        child_scope=Scope(parent=par_scope)
+        child_scope['c']='c'
+        self.assertEqual(child_scope.resolve('a', mode='straight'), none_type)
+        self.assertEqual(child_scope.resolve('c', mode='straight'), 'c')
+        self.assertEqual(child_scope.resolve('a', mode='cascade'), 'a')
+        par_scope['b']='b'
+        self.assertEqual(child_scope.resolve('b', mode='cascade'), 'b')
+
+    def test_copy(self):
+        par_scope=Scope(is_root=True)
+        par_scope['a']='a'
+        child_scope=Scope(parent=par_scope)
+        child_scope['c']='c'
+        child_scope2=child_scope.deep_copy()
+        print(child_scope.parent)
+        child_scope.parent['b']='b'
+        self.assertEqual(child_scope
+        
+        print(child_scope2.parent)
+
+
+
+
 
 #}}}
 
@@ -271,8 +311,8 @@ a.method()
 #}}}
 
 if __name__ == '__main__':
-    run_all=True
-    #run_all=False
+    #run_all=True
+    run_all=False
 
     if run_all:
         logger=logging.getLogger('')
@@ -281,5 +321,7 @@ if __name__ == '__main__':
     else:
         suite = unittest.TestSuite()
         #suite.addTest(TestWarnings('test_nonexistent_attribute'))
-        suite.addTest(TestInfer('test_method_lookup'))
+        suite.addTest(TestScope('test_basic'))
+        suite.addTest(TestScope('test_parent'))
+        suite.addTest(TestScope('test_copy'))
         unittest.TextTestRunner().run(suite)

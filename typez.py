@@ -8,7 +8,7 @@ def load_externs():
     f=open("externs.py", "r")
     source=f.read()
     node=ast.parse(source, filename='externs.py', mode='exec')
-    scope=Scope(root=True)    
+    scope=Scope(is_root=True)    
     print('@@@@@@ parsing externs')
     extern_scope=typez.extern_scope=parser.eval_code(node, scope)
     typez.inf_setattr=extern_scope['inf_setattr']
@@ -63,7 +63,6 @@ class Typez:
             self.bases=bases
             self.scope['__bases__']=bases
                 
-
     def __str__(self):
         res="Typez(%s kind, node: %s"%(self.kind,str(self.node))
         if self.value:
@@ -110,7 +109,8 @@ def type_from_list(list_of_typez, allow_none=True):
     else:
         return Typez(kind='multi', multi=list_of_typez)
 
-class Scope(dict):
+
+class ImmutableScope(dict):
     """
        dict, that maps symbols to Typez. Useful for remembering objects' states or scope for running
        the functions.
@@ -127,10 +127,10 @@ class Scope(dict):
        each scope (but root) knows its parent. Resolving of some attributes may be cascaded to that
        parent.
     """
-    def __init__(self, parent=None, root=False):
+    def __init__(self, parent=None, is_root=False):
+        if is_root:
+            parent=self
         self.parent=parent
-        if root:
-            self.parent=self
 
     def is_root(self):
         return self.parent==self
@@ -140,6 +140,17 @@ class Scope(dict):
 
     def __str__(self):
         return dict.__str__(self)
+
+    def __immutable_setitem__(self, attr, value):
+        """
+        set attr to value; produces new scope letting the original scope non-muted. It uses
+        deep_copy of its childs elements
+        """
+        i_scope=ImmutableScope(parent=self.parent)
+        for key, val in self.items():
+            i_scope[key]=val
+        i_scope[attr]=value
+        return i_scope
 
     def resolve(self, symbol, mode):
         """
@@ -172,6 +183,56 @@ class Scope(dict):
                     return none_type
 
 
-none_type=Typez(kind='const', value='None')
+class Scope:
+    """
+    Copy on write scope
+    """
 
+    def __init__(self, parent=None, is_root=False):
+        self._scope=ImmutableScope(parent, is_root)
+
+    def __setitem__(self, attr, value):
+        new_scope=self._scope.__immutable_setitem__(attr, value)
+        self._scope=new_scope
+
+    def deep_copy(self):
+        res=Scope()
+        res._scope=self._scope
+        return res
+
+    def is_root(self):
+        return self.parent==self
+
+    def __getattr__(self, attr):
+        if attr in ['__hash__', '__str__', '__repr__', 'resolve', 'parent']:
+            return getattr(self._scope, attr)
+
+    def __getitem__(self, attr):
+        return self._scope[attr]
+
+
+    def update(self, dct):
+        for key, val in dct.items:
+            self[key]=val
+       
+
+def merge_cowscopes(scope1, scope2):
+    scope=Scope()
+    for key, value in scope1.items():
+        if key in scope2:
+            if value==scope2[key]:
+                scope[key]=value
+            else:
+                value2=scope2[key]
+                scope[key]=merge_types(value, scope2)
+        if key not in scope2:
+            scope[key]=value
+    for key, value in scope2.items():
+        if not key in scope1:
+            scope[key]=value
+
+
+
+
+none_type=Typez(kind='const', value='None')
 

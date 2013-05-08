@@ -167,6 +167,9 @@ class Parser:
                 return args[0]
             return typez.type_from_list(results)
 
+    def exec_IfExp(test, body, orelse):
+        pass
+
     def exec_Call(self, node, scope):
         #first let's find out which function should be called. This should be easy when doing func()
         #call, but it can be tricky when using constructs such as 'a.b.c.func()'
