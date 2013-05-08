@@ -10,17 +10,13 @@ tokens = python_lexer.tokens
 
 """
 parser ludskou recou:
-    stmt: hocikolko hocicoho v jednom riadku | classdef | funcdef 
+    fragment: nejake hocico v jednom riadku
+    stmt: fragment NEWLINE | classdef | funcdef | block
     suite: hocikolko stmt 
     indented_suite: INDENT suite DEDENT
     classdef: DEF stmt: NEWLINE indented_suite
     funcdef: DEF stmt: NEWLINE indented_suite
-
 """
-
-    
-                
-
 
 def p_file_input(p):
     '''

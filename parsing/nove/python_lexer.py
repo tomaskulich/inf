@@ -422,7 +422,7 @@ def _parse_quoted_string(start_tok, string_toks):
     #  ""    - string_escape
     s = "".join(tok.value for tok in string_toks)
     return s
-    #XXX tu sa robil nejaky decode 
+    #XXX tu sa robil nejaky decode, vyhodene kvoli 2to3 issues
     #quote_type = start_tok.value.lower()
     #if quote_type == "":
     #    return s.decode("string_escape")
@@ -623,12 +623,12 @@ _add_endmarker = add_endmarker
 def mod_values(token_stream):
     """
     by tomas: modifies tokens, such that token's value will be reference to the whole token. This is
-    to overcome certain shortcomming in PLY, ugly but effective
+    to overcome certain shortcomming in PLY, ugly but effective: when certain rule is used, only
+    tokens value is given to the function, by this hack the value is reference to the whole token;
+    therefore we can get all the original information.
     """
     for tok in token_stream:
         res=_new_token(tok.type, tok.lineno, value=tok)
-        res.__repr__=lambda: str(tok)
-        res.__str__=lambda: str(tok)
         yield res
 
 def make_token_stream(lexer, add_endmarker = True):
@@ -638,6 +638,7 @@ def make_token_stream(lexer, add_endmarker = True):
     token_stream = synthesize_indentation_tokens(token_stream)
     if add_endmarker:
         token_stream = _add_endmarker(token_stream)
+    #hack by tomas, see docs
     token_stream=mod_values(token_stream)
     return token_stream
 

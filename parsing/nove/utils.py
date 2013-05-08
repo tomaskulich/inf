@@ -6,6 +6,10 @@ from ply import (
 
 
 class Context(object):
+    """
+    context used for printing parsing tree. Holds information about indentation level and last-seen
+    token
+    """
     def __init__(self):
         self.indent=0
         self.last=None
@@ -15,6 +19,10 @@ class Context(object):
         return '    '*self.indent
 
 class Node(object):
+    """
+    general class for one node in the parsing tree. All nodes but leafs in the parsing tree should
+    be of this type; leafs are instances of lex.Token
+    """
 
     def __init__(self, kind, childs=None):
         self.kind=kind
@@ -31,6 +39,9 @@ class Node(object):
         return self.__str__()
 
 def token_to_str(ctx, token):
+    """
+    converts token to string, handles special cases such as indent/dedent tokens, etc...
+    """
     if token.type=='INDENT':
         ctx.indent+=1
     elif token.type=='DEDENT':
@@ -67,6 +78,9 @@ def token_to_str(ctx, token):
         return str(token)
 
 def node_to_tree(node):
+    """
+    returns string representation of a tree rooted in the given node.
+    """
     def _to_tree_string(node, indent=0):
         res=["  "*indent+str(node)+'\n']
         if hasattr(node, 'childs'):
@@ -79,6 +93,10 @@ def node_to_tree(node):
     return ''.join(res)
 
 def node_to_str(node):
+    """
+    return code-like representation of a tree rooted in a given node. Should be parseable by exec,
+    eval or compile builtins.
+    """
     ctx=Context()
     def _to_string(node, ctx):
         res=[]
