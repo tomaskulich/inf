@@ -38,6 +38,15 @@ class Node(object):
     def __repr__(self):
         return self.__str__()
 
+    def __iter__(self):
+        yield self
+        for child in self.childs:
+            if not isinstance(child, Node):
+                yield child
+            else:
+                for childchild in child:
+                    yield childchild
+
 def token_to_str(ctx, token):
     """
     converts token to string, handles special cases such as indent/dedent tokens, etc...

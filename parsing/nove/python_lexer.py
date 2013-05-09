@@ -571,10 +571,11 @@ def synthesize_indentation_tokens(token_stream):
         if token.must_indent:
             # The current depth must be larger than the previous level
             if not (depth > levels[-1]):
-                raise_indentation_error("expected an indented block", token)
-
-            levels.append(depth)
-            yield INDENT(token.lineno)
+                pass
+                #raise_indentation_error("expected an indented block", token)
+            else:
+                levels.append(depth)
+                yield INDENT(token.lineno)
 
         elif token.at_line_start:
             # Must be on the same level or one of the previous levels

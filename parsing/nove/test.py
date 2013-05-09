@@ -20,6 +20,7 @@ def setup_test(test, filename):
     test.gl=gl
     test.lc=lc
     test.code=code
+    test.node=res
     
 
 class SampleTest(unittest.TestCase):
@@ -56,6 +57,7 @@ class SampleTest(unittest.TestCase):
     def test_sample3(self):
         setup_test(self, 'sample3.py')
         exec(self.code,globals(),self.lc)
+        print(utils.node_to_tree(self.node))
         lc=self.lc
         inc=lc['inc']
         self.assertEqual(inc(3),4)

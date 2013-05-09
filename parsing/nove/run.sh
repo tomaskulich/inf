@@ -1,2 +1,2 @@
 rm parser.out parsetab.py
-python test.py
+python prednaska.py

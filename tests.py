@@ -1,8 +1,8 @@
 import unittest
 import ast
 import logging
-#from parse_ast import Parser
-#from typez import extern_scope
+from parse_ast import Parser
+from typez import extern_scope
 from  typez import (
         Scope,
         Typez,
@@ -71,47 +71,50 @@ class TestResolve(unittest.TestCase): #{{{
 
 #}}}
 
-class TestScope(unittest.TestCase): #{{{
-    def test_basic(self):
-        scope=Scope(is_root=True)
-        scope['a']='a'
-        scope['b']='b'
-        scope2=scope.deep_copy()
-        self.assertEqual(scope._scope, scope2._scope)
-        self.assertEqual(scope['a'], 'a')
-        self.assertEqual(scope2['b'], 'b')
-
-    def test_parent(self):
-        par_scope=Scope(is_root=True)
-        par_scope['a']='a'
-        child_scope=Scope(parent=par_scope)
-        child_scope['c']='c'
-        self.assertEqual(child_scope.resolve('a', mode='straight'), none_type)
-        self.assertEqual(child_scope.resolve('c', mode='straight'), 'c')
-        self.assertEqual(child_scope.resolve('a', mode='cascade'), 'a')
-        par_scope['b']='b'
-        self.assertEqual(child_scope.resolve('b', mode='cascade'), 'b')
-
-    def test_copy(self):
-        par_scope=Scope(is_root=True)
-        par_scope['a']='a'
-        child_scope=Scope(parent=par_scope)
-        child_scope['c']='c'
-        child_scope2=child_scope.deep_copy()
-        print(child_scope.parent)
-        child_scope.parent['b']='b'
-        self.assertEqual(child_scope
-        
-        print(child_scope2.parent)
-
-
-
-
+#class TestScope(unittest.TestCase): #{{{
+#    def test_basic(self):
+#        scope=Scope(is_root=True)
+#        scope['a']='a'
+#        scope['b']='b'
+#        scope2=scope.deep_copy()
+#        self.assertEqual(scope._scope, scope2._scope)
+#        self.assertEqual(scope['a'], 'a')
+#        self.assertEqual(scope2['b'], 'b')
+#
+#    def test_parent(self):
+#        par_scope=Scope(is_root=True)
+#        par_scope['a']='a'
+#        child_scope=Scope(parent=par_scope)
+#        child_scope['c']='c'
+#        self.assertEqual(child_scope.resolve('a', mode='straight'), none_type)
+#        self.assertEqual(child_scope.resolve('c', mode='straight'), 'c')
+#        self.assertEqual(child_scope.resolve('a', mode='cascade'), 'a')
+#        par_scope['b']='b'
+#        self.assertEqual(child_scope.resolve('b', mode='cascade'), 'b')
+#
+#    def test_copy(self):
+#        par_scope=Scope(is_root=True)
+#        par_scope['a']='a'
+#        child_scope=Scope(parent=par_scope)
+#        child_scope['c']='c'
+#        child_scope2=child_scope.deep_copy()
+#        print(child_scope.parent)
+#        child_scope.parent['b']='b'
+#        print(child_scope2.parent)
 
 #}}}
 
 class TestInfer(unittest.TestCase): #{{{
 
+
+    def setUp(self):
+        def assertIsNum(typez):
+            self.assertIsInstance(typez, ast.Num)
+        self.assertIsNum=assertIsNum
+        def assertIsStr(typez):
+            self.assertIsInstance(typez, ast.Str)
+        self.assertIsStr=assertIsStr
+   
     def test_simple_parse(self):
         code="""
 x=3
@@ -127,20 +130,20 @@ x='mumly'
         node=ast.parse(code, mode='exec')
         parser=Parser()
         module_scope=parser.eval_code(node)
-        x=module_scope.resolve('x','straight')
-        y=module_scope.resolve('y','straight')
-        z=module_scope.resolve('z','straight')
-        zz=module_scope.resolve('zz','straight')
-        a=module_scope.resolve('a','straight')
-        b=module_scope.resolve('b','straight')
-        c=module_scope.resolve('c','straight')
-        self.assertIsInstance(x.node, ast.Str)
-        self.assertIsInstance(y.node, ast.Num)
-        self.assertIsInstance(z.node, ast.Num)
-        self.assertIsInstance(zz.node, ast.Num)
-        self.assertIsInstance(a.node, ast.Str)
-        self.assertIsInstance(b.node, ast.Str)
-        self.assertIsInstance(c.node, ast.Str)
+        x=module_scope.resolve('x')
+        y=module_scope.resolve('y')
+        z=module_scope.resolve('z')
+        zz=module_scope.resolve('zz')
+        a=module_scope.resolve('a')
+        b=module_scope.resolve('b')
+        c=module_scope.resolve('c')
+        self.assertIsStr(x.node)
+        self.assertIsNum(y.node)
+        self.assertIsNum(z.node)
+        self.assertIsNum(zz.node)
+        self.assertIsStr(a.node)
+        self.assertIsStr(b.node)
+        self.assertIsStr(c.node)
 
     def test_fun_parse(self):
         code="""
@@ -160,14 +163,14 @@ zz=gean(x,"fero")
         node=ast.parse(code, mode='exec')
         parser=Parser()
         module_scope=parser.eval_code(node)
-        x=module_scope.resolve('x','straight')
-        y=module_scope.resolve('y','straight')
-        z=module_scope.resolve('z','straight')
-        zz=module_scope.resolve('zz','straight')
-        self.assertIsInstance(x.node, ast.Str)
-        self.assertIsInstance(y.node, ast.Num)
-        self.assertIsInstance(z.node, ast.Num)
-        self.assertIsInstance(zz.node, ast.Str)
+        x=module_scope.resolve('x')
+        y=module_scope.resolve('y')
+        z=module_scope.resolve('z')
+        zz=module_scope.resolve('zz')
+        self.assertIsStr(x.node)
+        self.assertIsNum(y.node)
+        self.assertIsNum(z.node)
+        self.assertIsStr(zz.node)
     
     def test_closure(self):
         code="""
@@ -187,10 +190,10 @@ b=g2('fero')
         node=ast.parse(code, mode='exec')
         parser=Parser()
         module_scope=parser.eval_code(node)
-        a=module_scope.resolve('a','straight')
-        b=module_scope.resolve('b','straight')
-        self.assertIsInstance(a.node, ast.Num)
-        self.assertIsInstance(b.node, ast.Str)
+        a=module_scope.resolve('a')
+        b=module_scope.resolve('b')
+        self.assertIsNum(a.node)
+        self.assertIsStr(b.node)
 
     def test_class(self):
         code="""
@@ -203,10 +206,10 @@ a=A(3,"ahoj", "svet")
         node=ast.parse(code, mode='exec')
         parser=Parser()
         module_scope=parser.eval_code(node)
-        a=module_scope.resolve('a','straight')
-        self.assertIsInstance(a.scope['x'].node, ast.Num)
-        self.assertIsInstance(a.scope['y'].node, ast.Str)
-        self.assertEqual(a.scope.resolve('z','straight').value,'None')
+        a=module_scope.resolve('a')
+        self.assertIsNum(a.scope['x'].node)
+        self.assertIsStr(a.scope['y'].node)
+        self.assertEqual(a.scope.resolve('z').value,'None')
 
     def test_override_setattr(self):
         code="""
@@ -227,9 +230,9 @@ object.__setattr__(a,key,'jozo')
         node=ast.parse(code, mode='exec')
         parser=Parser()
         module_scope=parser.eval_code(node)
-        a=module_scope.resolve('a','straight')
-        self.assertIsInstance(a.scope['x'].node, ast.Num)
-        self.assertIsInstance(a.scope['z'].node, ast.Str)
+        a=module_scope.resolve('a')
+        self.assertIsNum(a.scope['x'].node)
+        self.assertIsStr(a.scope['z'].node)
 
     def test_method_lookup(self):
         code="""
@@ -250,15 +253,15 @@ c=a.get_x()
         node=ast.parse(code, mode='exec')
         parser=Parser()
         module_scope=parser.eval_code(node)
-        a=module_scope.resolve('a','straight')
-        A=module_scope.resolve('A','straight')
+        a=module_scope.resolve('a')
+        A=module_scope.resolve('A')
         self.assertNotIn('get_x', a.scope)
         self.assertIn('get_x', A.scope)
-        b=module_scope.resolve('b','straight')
-        c=module_scope.resolve('c','straight')
-        getx=module_scope.resolve('getx', 'straight')
-        self.assertIsInstance(b.node, ast.Str)
-        self.assertIsInstance(c.node, ast.Num)
+        b=module_scope.resolve('b')
+        c=module_scope.resolve('c')
+        getx=module_scope.resolve('getx')
+        self.assertIsStr(b.node)
+        self.assertIsNum(c.node)
         self.assertEqual(getx.kind, 'func')
 
     def test_inheritance(self):
@@ -282,10 +285,10 @@ b.y=4
         node=ast.parse(code, mode='exec')
         parser=Parser()
         module_scope=parser.eval_code(node)
-        b=module_scope.resolve('b','straight')
-        self.assertIsInstance(b.scope['y'].node, ast.Num)
-        self.assertIsInstance(b.scope['x'].node, ast.Str)
-
+        b=module_scope.resolve('b')
+        self.assertIsNum(b.scope['y'].node)
+        self.assertIsStr(b.scope['x'].node)
+        self.assertEqual(b.scope.resolve('get_x', 'class').kind, 'func')
 
 #}}}
 
@@ -311,8 +314,8 @@ a.method()
 #}}}
 
 if __name__ == '__main__':
-    #run_all=True
-    run_all=False
+    run_all=True
+    #run_all=False
 
     if run_all:
         logger=logging.getLogger('')
@@ -321,7 +324,4 @@ if __name__ == '__main__':
     else:
         suite = unittest.TestSuite()
         #suite.addTest(TestWarnings('test_nonexistent_attribute'))
-        suite.addTest(TestScope('test_basic'))
-        suite.addTest(TestScope('test_parent'))
-        suite.addTest(TestScope('test_copy'))
         unittest.TextTestRunner().run(suite)

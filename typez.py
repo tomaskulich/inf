@@ -51,7 +51,7 @@ class Typez:
         if self.kind=='prim':
             name=node.__class__.__name__+"_"
             class_type=find_by_name(name)
-            self.scope=Scope(root=True)
+            self.scope=Scope(is_root=True)
             self.scope.update({'__class__':class_type})
         if self.kind=='class':
             if not bases:
@@ -110,7 +110,7 @@ def type_from_list(list_of_typez, allow_none=True):
         return Typez(kind='multi', multi=list_of_typez)
 
 
-class ImmutableScope(dict):
+class Scope(dict):
     """
        dict, that maps symbols to Typez. Useful for remembering objects' states or scope for running
        the functions.
@@ -141,18 +141,7 @@ class ImmutableScope(dict):
     def __str__(self):
         return dict.__str__(self)
 
-    def __immutable_setitem__(self, attr, value):
-        """
-        set attr to value; produces new scope letting the original scope non-muted. It uses
-        deep_copy of its childs elements
-        """
-        i_scope=ImmutableScope(parent=self.parent)
-        for key, val in self.items():
-            i_scope[key]=val
-        i_scope[attr]=value
-        return i_scope
-
-    def resolve(self, symbol, mode):
+    def resolve(self, symbol, mode='straight'):
         """
            similar to Typez.resolve
         """
@@ -183,53 +172,6 @@ class ImmutableScope(dict):
                     return none_type
 
 
-class Scope:
-    """
-    Copy on write scope
-    """
-
-    def __init__(self, parent=None, is_root=False):
-        self._scope=ImmutableScope(parent, is_root)
-
-    def __setitem__(self, attr, value):
-        new_scope=self._scope.__immutable_setitem__(attr, value)
-        self._scope=new_scope
-
-    def deep_copy(self):
-        res=Scope()
-        res._scope=self._scope
-        return res
-
-    def is_root(self):
-        return self.parent==self
-
-    def __getattr__(self, attr):
-        if attr in ['__hash__', '__str__', '__repr__', 'resolve', 'parent']:
-            return getattr(self._scope, attr)
-
-    def __getitem__(self, attr):
-        return self._scope[attr]
-
-
-    def update(self, dct):
-        for key, val in dct.items:
-            self[key]=val
-       
-
-def merge_cowscopes(scope1, scope2):
-    scope=Scope()
-    for key, value in scope1.items():
-        if key in scope2:
-            if value==scope2[key]:
-                scope[key]=value
-            else:
-                value2=scope2[key]
-                scope[key]=merge_types(value, scope2)
-        if key not in scope2:
-            scope[key]=value
-    for key, value in scope2.items():
-        if not key in scope1:
-            scope[key]=value
 
 
 
