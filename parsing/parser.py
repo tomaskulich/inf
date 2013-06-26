@@ -30,6 +30,12 @@ def p_block(p):
     '''
     p[0] = Node(kind='block', childs=p)
 
+def p_inline_block(p):
+    '''
+    block : block_keyword fragment COLON suite 
+    '''
+    p[0] = Node(kind='block', childs=p)
+
 def p_empty_block(p):
     '''
     block : block_keyword fragment COLON NEWLINE 

@@ -63,6 +63,10 @@ def token_to_str(ctx, token):
         return 'class '
     elif token.type=='FOR':
         return 'for '
+    elif token.type=='WHILE':
+        return 'while '
+    elif token.type=='IF':
+        return 'if '
     elif token.type=='NAME':
         if ctx.last and ctx.last.type=='NAME':
             return ' '+token.value

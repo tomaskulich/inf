@@ -26,7 +26,7 @@ def setup_test(test, filename):
 class SampleTest(unittest.TestCase):
 
     def test_sample1(self):
-        setup_test(self, 'sample1.py')
+        setup_test(self, 'samples/sample1.py')
         lc=self.lc
         exec(self.code,self.gl,self.lc)
         pokus=lc['Pokus']()
@@ -42,7 +42,7 @@ class SampleTest(unittest.TestCase):
 
 
     def test_sample2(self):
-        setup_test(self, 'sample2.py')
+        setup_test(self, 'samples/sample2.py')
         exec(self.code,globals(),self.lc)
         lc=self.lc
         dct=lc['get_dct']()
@@ -55,9 +55,10 @@ class SampleTest(unittest.TestCase):
         self.assertEqual(len(slc),2)
 
     def test_sample3(self):
-        setup_test(self, 'sample3.py')
+        setup_test(self, 'samples/sample3.py')
+        print(self.code)
         exec(self.code,globals(),self.lc)
-        print(utils.node_to_tree(self.node))
+        #print(utils.node_to_tree(self.node))
         lc=self.lc
         inc=lc['inc']
         self.assertEqual(inc(3),4)
