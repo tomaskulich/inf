@@ -35,7 +35,7 @@ class Typez:
     class enclosing most of the types we deal with.
 
     attributes:
-        kind: any, prim, const, obj, class, func, multi. All options but multi are considered single.
+        kind: any, prim, const, obj, class, func. All options but multi are considered single.
         multi: [Typez] if type is multi, it holds all the type-choices
         scope: Scope for the given type. scope.parent should point to the enclosing scope.
         node: ast.AST, important data for some node types

@@ -7,7 +7,7 @@ literal_to_name = {}
 # List of tokens for PLY
 tokens = []
 
-kwlist=['class', 'def']
+kwlist=['class', 'def', 'if', 'else', 'elif', 'try', 'except', 'finally', 'while', 'for', 'with']
 RESERVED = {}
 for literal in kwlist:
     name = literal.upper()

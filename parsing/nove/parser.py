@@ -24,48 +24,47 @@ def p_file_input(p):
     '''
     p[0] = Node(kind='file_input', childs=p)
 
-def p_funcdef(p):
-    '''
-    funcdef : DEF fragment COLON NEWLINE indented_suite
-            | DEF fragment COLON fragment NEWLINE
-    '''
-    p[0] = Node(kind='funcdef', childs=p)
-
-def p_classdef(p):
-    '''
-    classdef : CLASS fragment COLON NEWLINE indented_suite
-    '''
-    p[0] = Node(kind='classdef', childs=p)
-
-def p_indented_suite(p):
-    '''
-    indented_suite : INDENT suite DEDENT
-    '''
-    p[0] = Node(kind='indented_suite', childs=p)
-
-    
 def p_block(p):
     '''
-    block : fragment COLON NEWLINE indented_suite
+    block : block_keyword fragment COLON NEWLINE INDENT suite DEDENT
     '''
     p[0] = Node(kind='block', childs=p)
 
-    
+def p_empty_block(p):
+    '''
+    block : block_keyword fragment COLON NEWLINE 
+    '''
+    p[0] = Node(kind='block', childs=p)
+
+def p_block_keyword(p):
+    '''
+    block_keyword : CLASS
+                    | DEF
+                    | IF
+                    | ELIF
+                    | ELSE
+                    | TRY
+                    | EXCEPT
+                    | FINALLY
+                    | WITH
+                    | WHILE
+                    | FOR
+    '''
+    p[0] = Node(kind='keyword', childs=p)
+
 def p_suite(p):
     '''
     suite : stmt
           | suite stmt
     '''
     p[0]=Node(kind='suite', childs=p)
-    
+
 def p_stmt(p):
     '''
     stmt : fragment NEWLINE
          | fragment ENDMARKER
          | NEWLINE
          | ENDMARKER
-         | funcdef
-         | classdef
          | block
     '''
     p[0]=Node(kind='stmt', childs=p)

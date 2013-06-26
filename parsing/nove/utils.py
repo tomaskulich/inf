@@ -61,6 +61,8 @@ def token_to_str(ctx, token):
         return 'def '
     elif token.type=='CLASS':
         return 'class '
+    elif token.type=='FOR':
+        return 'for '
     elif token.type=='NAME':
         if ctx.last and ctx.last.type=='NAME':
             return ' '+token.value
@@ -123,7 +125,7 @@ def node_to_str(node):
                     res.append(token_string)
                 ctx.last=child
             else:
-                raise Exception('should not get here!')
+                raise Exception('should not get here! '+str(child))
         return ''.join(res)
     return _to_string(node, ctx)
             

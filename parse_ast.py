@@ -6,7 +6,6 @@ from typez import (
         none_type,
         )
 import typez
-import parse_ast
 import logging
 
 logger=logging.getLogger('')
