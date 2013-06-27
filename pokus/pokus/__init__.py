@@ -1,3 +1,0 @@
-
-m='ahoj'
-print('importing')
