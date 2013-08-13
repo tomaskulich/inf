@@ -2,7 +2,7 @@ import python_lexer
 import python_parser as parser
 import utils
 
-f = open('samples/sample2.py')
+f = open('samples/sample1.py')
 data = f.read()
 f.close()
 lexer = python_lexer.PythonLexer()
@@ -29,3 +29,5 @@ try:
     print(utils.astNode_to_tree(ast_tree))
 except Exception as error:
     print("Error in part which should be valid: ",error)
+    
+

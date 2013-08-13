@@ -17,5 +17,7 @@ def cond():
         r=random.random()
         if r<0.001:
             return r
+        
+
 
 

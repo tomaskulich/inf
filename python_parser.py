@@ -119,3 +119,4 @@ def parse_data(data,lexer):
     yacc.yacc()
     result = yacc.parse(data, lexer)
     return result
+
