@@ -19,6 +19,9 @@ class inf_object:
 
     def __setattr__(self, name, value):
         return inf_setattr(self, name, value)
+    
+    def umriumri():
+        pass
 
 class Num_(inf_object):
     def __add__(self,x):
