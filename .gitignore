@@ -3,3 +3,5 @@ pokus/*
 *.pyc
 *.pyo
 *.swp
+*.swo
+*.log
