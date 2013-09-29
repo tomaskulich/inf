@@ -383,7 +383,7 @@ def t_NAME(t):
     return t
 
 def t_OPERATOR(t):
-    r"[\+\-\*\/\.\^><=,;@,~]+"
+    r"[\+\-\*\/\.\^><=,;@,~%]+"
     t.type="OPERATOR"
     return t
 

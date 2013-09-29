@@ -15,7 +15,3 @@ class Pokus:
 
 if dummy:
     mumly
-
-
-
-

@@ -3,7 +3,3 @@ class Pokus:
         return self.x*self.y
 if dummy:
     mumly
-
-
-
-

@@ -74,7 +74,7 @@ def token_to_str(ctx, token):
         else:
             return token.value
     elif token.type=='NUMBER':
-        return str(token.value[1])
+        return ' ' + str(token.value[1])
     elif token.type=='STRING':
         val=token.value
         triple_double='"""'

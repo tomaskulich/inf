@@ -69,6 +69,7 @@ def p_stmt(p):
     '''
     stmt : fragment NEWLINE
          | fragment ENDMARKER
+         | fragment
          | NEWLINE
          | ENDMARKER
          | block

@@ -2,7 +2,7 @@ import python_lexer
 import python_parser as parser
 import utils
 
-f = open('samples/sample1.py')
+f = open('samples/sample10.py')
 data = f.read()
 f.close()
 lexer = python_lexer.PythonLexer()
@@ -17,7 +17,7 @@ res=parser.parse_data(data, lexer)
     #    print('@'*50)
     #    print(utils.node_to_str(node))
 
-#print(utils.node_to_str(res))
+print(utils.node_to_str(res))
 
 print(utils.node_to_tree(res))
 utils.traverse_ast(res)

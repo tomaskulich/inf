@@ -43,7 +43,16 @@ class SampleTest(unittest.TestCase):
         utils.traverse_ast(self.node)
         self.assertEqual(self.code, utils.node_to_str(self.node))
 
-
+    def test_sample8(self):
+        setup_test(self, 'samples/sample8.py')
+        lc = self.lc
+        exec(self.code,self.gl,self.lc)
+        square=lc['Square'](50)
+        
+        self.assertEqual(square.area(),2500)
+        
+        
+        
     def test_sample2(self):
         setup_test(self, 'samples/sample2.py')
         exec(self.code,globals(),self.lc)
@@ -84,7 +93,6 @@ class SampleTest(unittest.TestCase):
         setup_test(self, 'samples/sample5.py')
         utils.traverse_ast(self.node)
         self.assertEqual(data, utils.node_to_str(self.node))
-
 
 
 if __name__ == '__main__':
