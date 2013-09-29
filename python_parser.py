@@ -94,6 +94,8 @@ def p_fragment(p):
          | fragment LSQB
          | fragment RSQB
          | fragment COLON
+         | fragment FOR
+         | FOR
          | LBRACE
          | RBRACE
          | STRING_END
