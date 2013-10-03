@@ -1,5 +1,5 @@
 import python_lexer
-import parser
+import python_parser as parser
 import utils
 import unittest
 import logging
@@ -39,8 +39,11 @@ class SampleTest(unittest.TestCase):
         self.assertEqual(b, 23)
         self.assertEqual(mul(4)(5), 20)
         self.assertTrue(re.search('riadkov', pokus.__init__.__doc__))
+        
+        utils.traverse_ast(self.node)
+        self.assertEqual(self.code, utils.node_to_str(self.node))
 
-
+    
     def test_sample2(self):
         setup_test(self, 'samples/sample2.py')
         exec(self.code,globals(),self.lc)
@@ -65,12 +68,42 @@ class SampleTest(unittest.TestCase):
         self.assertIn('pokus', lc)
         self.assertEqual(lc['loop'](),10)
         self.assertLess(lc['cond'](),0.001)
-
+    
+    def test_sample4(self):
+        f = open('samples/sample4_solution.py')
+        data = f.read()
+        f.close()
+        setup_test(self, 'samples/sample4.py')
+        utils.traverse_ast(self.node)
+        self.assertEqual(data, utils.node_to_str(self.node))
+    
+    def test_sample5(self):
+        f = open('samples/sample5_solution.py')
+        data = f.read()
+        f.close()
+        setup_test(self, 'samples/sample5.py')
+        utils.traverse_ast(self.node)
+        self.assertEqual(data, utils.node_to_str(self.node))
+        
+        
+    def test_sample6(self):
+        setup_test(self, 'samples/sample8.py')
+        lc = self.lc
+        exec(self.code,self.gl,self.lc)
+        square=lc['Square'](50)
+        
+        self.assertEqual(square.area(),2500)
+        
+        
+        
 
 if __name__ == '__main__':
     logger=logging.getLogger('')
     logger.setLevel(logging.DEBUG)
     unittest.main()
+
+
+
 
 
 #print(utils.node_to_tree(res))

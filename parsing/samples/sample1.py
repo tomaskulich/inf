@@ -4,7 +4,7 @@
 class Pokus(object):
     def __init__(self):
         """
-        docstring ku konstruktoru
+        docstring % ku konstruktoru
         dokonca
         cez
         viacero
@@ -31,5 +31,6 @@ def mul(k):
 
 a="jozo"
 b=23
+
 
 

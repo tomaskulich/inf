@@ -1,8 +1,5 @@
-import ast
-import _ast
-
 def walk_flat(node):
-  pass
+    pass
 
 def node_to_str(node):
     if hasattr(node, 'lineno'):

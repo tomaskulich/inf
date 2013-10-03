@@ -383,7 +383,7 @@ def t_NAME(t):
     return t
 
 def t_OPERATOR(t):
-    r"[\+\-\*\/\.\^><=,;@,~]+"
+    r"[\+\-\*\/\.\^><=,;@,~%]+"
     t.type="OPERATOR"
     return t
 
@@ -688,4 +688,6 @@ lexer = PythonLexer()
 #lexer.input(text, "python_lex.py")
 #for tok in lexer:
 #    print tok
+
+
 

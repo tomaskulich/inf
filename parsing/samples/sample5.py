@@ -8,13 +8,8 @@ class Pokus:
 
     def confuse_ast(self):
         for i in range(10):
-            I am really curious, what would AST do with this
+            x=2
         return return return return #haha
 
-mumly
-mumly
-
-
-
-
-
+if dummy:
+    mumly

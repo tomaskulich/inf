@@ -1,4 +1,5 @@
 import re
+import ast
 from ply import (
         yacc,
         lex,
@@ -73,7 +74,7 @@ def token_to_str(ctx, token):
         else:
             return token.value
     elif token.type=='NUMBER':
-        return str(token.value[1])
+        return ' ' + str(token.value[1])
     elif token.type=='STRING':
         val=token.value
         triple_double='"""'
@@ -107,6 +108,19 @@ def node_to_tree(node):
 
     return ''.join(res)
 
+def astNode_to_tree(node):
+    """
+    returns string representation of a ASTree rooted in the given node.
+    """
+    def _to_tree_string(node, indent=0):
+        res=["\t"*indent+type(node).__name__+" : "+str(node.__dict__)+'\n']
+        for child in ast.iter_child_nodes(node):
+            res.extend(_to_tree_string(child, indent+1))
+        return res
+    res=_to_tree_string(node)
+    
+    return ''.join(res)
+
 def node_to_str(node):
     """
     return code-like representation of a tree rooted in a given node. Should be parseable by exec,
@@ -132,5 +146,50 @@ def node_to_str(node):
                 raise Exception('should not get here! '+str(child))
         return ''.join(res)
     return _to_string(node, ctx)
-            
 
+def traverse_ast(node):
+    """
+    modifies parsing tree,controls each definition by ast.parse...
+    """
+    def isCompound(node):
+        for i,child in enumerate(node):
+            if i!=0 and isinstance(child, Node) and (child.kind=='block'):
+                return True
+        return False
+    
+    def _ast(node):
+        if isinstance(node, Node):
+            if (node.kind=='block'):
+                if isCompound(node):
+                    for child in node.childs:
+                        _ast(child)
+                try:
+                    n = parse_with_ast(node)
+                except Exception as error:
+                    print(error)
+                    print("DELETING A PART OF CODE")
+                    node.childs = []
+            else:
+                for child in node.childs:
+                        _ast(child)        
+            
+    return _ast(node)
+
+def parse_with_ast(node):
+    """
+    returns abstract syntax tree(or exception) of a tree rooted in the given node.
+    """
+    code=node_to_str(node)
+    return ast.parse(code)
+
+
+
+
+    
+                    
+                    
+
+             
+             
+        
+    
