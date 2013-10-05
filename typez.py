@@ -30,6 +30,7 @@ class CannotResolve(Exception):
 def is_none(_typez):
     return _typez.kind=='const' and _typez.value=='None'
 
+
 class Typez:
     """
     class enclosing most of the types we deal with.
@@ -93,6 +94,7 @@ class Typez:
             return type_from_list(result)
         else:
             return self.scope.resolve(symbol, mode)
+
 
 
 def type_from_list(list_of_typez, allow_none=True):

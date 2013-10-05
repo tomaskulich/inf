@@ -2,7 +2,7 @@ import python_lexer
 import python_parser as parser
 import utils
 
-f = open('samples/sample12.py')
+f = open('samples/sample13.py')
 data = f.read()
 f.close()
 lexer = python_lexer.PythonLexer()

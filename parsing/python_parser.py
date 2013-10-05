@@ -1,9 +1,8 @@
-from ply import (
-        yacc,
-        )
+from ply import yacc
 from utils import Node
 
 import python_lexer
+
 tokens = python_lexer.tokens
 
 
@@ -95,6 +94,8 @@ def p_fragment(p):
          | fragment RSQB
          | fragment COLON
          | fragment FOR
+         | fragment block_keyword
+         | block_keyword
          | FOR
          | LBRACE
          | RBRACE
