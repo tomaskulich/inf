@@ -316,6 +316,7 @@ a.method()
 if __name__ == '__main__':
     run_all=True
     #run_all=False
+    print ("TEST CLASS RUNNING")
 
     if run_all:
         logger=logging.getLogger('')
