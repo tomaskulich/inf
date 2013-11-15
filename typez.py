@@ -14,9 +14,9 @@ def load_externs():
     extern_scope = typez.extern_scope = parser.eval_code(node, scope)
     typez.inf_setattr = extern_scope['inf_setattr']
     typez.inf_getattr = extern_scope['inf_getattr']
-    extern_scope['int'] = extern_scope['Num_']
-    extern_scope['str'] = extern_scope['Str_']
-    extern_scope['object'] = extern_scope['inf_object']
+    #extern_scope['int'] = extern_scope['inf_num']
+    #extern_scope['str'] = extern_scope['inf_str']
+    #extern_scope['object'] = extern_scope['inf_object']
     logger.info('externs parsed')
 
 def find_by_name(name, extern_scope = None):
@@ -41,20 +41,36 @@ class Typez:
         bases: list of ancestor classes (used only for 'class' kind)
         value: value of the primitive type, or const
     """
-    def __init__(self, kind, node = None, multi = None, scope = None, bases = None, value = None):
+
+    def clone(self):
+        other = Typez(kind = 'any')
+        for attr in ['kind', 'node', 'scope', 'parent_scope', 'bases', 'value', 'klass_name']:
+            if hasattr(self, attr):
+                setattr(other, attr, getattr(self, attr))
+        return other
+
+    def __init__(self, kind, node = None, scope = None, parent_scope = None, bases = None, value = None, klass_name =
+            None):
         self.kind = kind
         self.node = node
-        self.multi = multi
-        self.scope = scope
         self.value = value
-        if self.kind == 'prim':
-            name = node.__class__.__name__+"_"
-            class_type = find_by_name(name)
-            self.scope = Scope(is_root = True)
-            self.scope.update({'__class__':class_type})
+        self.is_method = False
+        self.self_obj = None
+        
+        if scope != None:
+            self.scope = scope
+        else:
+            if parent_scope != None:
+                self.scope = Scope(parent = parent_scope)
+            else:
+                self.scope = Scope(is_root = True)
+        if self.kind == 'obj':
+            if klass_name:
+                class_type = find_by_name(klass_name)
+                self.scope.update({'__class__':class_type})
         if self.kind == 'class':
             if not bases:
-                inf_object = scope.resolve('inf_object', 'cascade')
+                inf_object = scope.resolve('object', 'cascade')
                 if  inf_object:
                     bases = (inf_object,)
                 else:
@@ -63,6 +79,8 @@ class Typez:
                     bases = ()
             self.bases = bases
             self.scope['__bases__'] = bases
+            self.scope['__name__'] = klass_name
+
                 
     def __str__(self):
         res = "Typez(%s kind, node: %s"%(self.kind,str(self.node))

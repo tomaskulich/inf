@@ -16,8 +16,8 @@ def makecode(code):
 class TestResolve(unittest.TestCase): #{{{
 
     def setUp(self):
-        pr_num = Typez(kind = 'prim', node = ast.Num())
-        pr_str = Typez(kind = 'prim', node = ast.Str())
+        pr_num = Typez(kind = 'obj', node = ast.Num(), klass_name = 'num')
+        pr_str = Typez(kind = 'obj', node = ast.Str(), klass_name = 'str')
         self.scope = Scope(is_root = True)
         self.scope.update({'xxx':pr_str})
 
@@ -42,7 +42,7 @@ class TestResolve(unittest.TestCase): #{{{
 
     def test_resolve_in_type(self):
         res = self.type1.resolve('a', 'straight')
-        self.assertEqual(res.kind,'prim')
+        self.assertEqual(res.kind,'obj')
         self.assertIsInstance(res.node, ast.Num)
         self.assertEqual(self.scope.resolve('c'), None)
 
@@ -92,22 +92,23 @@ class TestInfer(unittest.TestCase): #{{{
 
 
     def setUp(self):
-        def assertIsNum(typez):
-            self.assertIsInstance(typez, ast.Num)
-        self.assertIsNum = assertIsNum
-        def assertIsStr(typez):
-            self.assertIsInstance(typez, ast.Str)
-        self.assertIsStr = assertIsStr
-   
+        pass
+
+    def assertIsNum(self, typez):
+        self.assertEqual(typez.scope['__class__'].scope['__name__'], 'num')
+
+    def assertIsStr(self, typez):
+        self.assertEqual(typez.scope['__class__'].scope['__name__'], 'str')
+
     def test_simple_parse(self):
         code = makecode("""
             |x = 3
             |a = 'ahoj'
             |y = 6
-            |z = 3+x
-            |zz = x+y
+            |z = 3 + x
+            |zz = x + y
             |b = 'jozo'
-            |c = a+b
+            |c = a + b
             |x = 'mumly'
         """)
         node = ast.parse(code, mode = 'exec')
@@ -120,13 +121,13 @@ class TestInfer(unittest.TestCase): #{{{
         a = module_scope.resolve('a')
         b = module_scope.resolve('b')
         c = module_scope.resolve('c')
-        self.assertIsStr(x.node)
-        self.assertIsNum(y.node)
-        self.assertIsNum(z.node)
-        self.assertIsNum(zz.node)
-        self.assertIsStr(a.node)
-        self.assertIsStr(b.node)
-        self.assertIsStr(c.node)
+        self.assertIsStr(x)
+        self.assertIsNum(y)
+        self.assertIsNum(z)
+        self.assertIsNum(zz)
+        self.assertIsStr(a)
+        self.assertIsStr(b)
+        self.assertIsStr(c)
 
     def test_fun_parse(self):
         code = makecode("""
@@ -149,10 +150,10 @@ class TestInfer(unittest.TestCase): #{{{
         y = module_scope.resolve('y')
         z = module_scope.resolve('z')
         zz = module_scope.resolve('zz')
-        self.assertIsStr(x.node)
-        self.assertIsNum(y.node)
-        self.assertIsNum(z.node)
-        self.assertIsStr(zz.node)
+        self.assertIsStr(x)
+        self.assertIsNum(y)
+        self.assertIsNum(z)
+        self.assertIsStr(zz)
     
     def test_default_object(self):
         code = makecode("""
@@ -188,8 +189,8 @@ class TestInfer(unittest.TestCase): #{{{
         module_scope = parser.eval_code(node)
         a = module_scope.resolve('a')
         b = module_scope.resolve('b')
-        self.assertIsNum(a.node)
-        self.assertIsStr(b.node)
+        self.assertIsNum(a)
+        self.assertIsStr(b)
 
 
     def test_class(self):
@@ -198,14 +199,19 @@ class TestInfer(unittest.TestCase): #{{{
                 |    def __init__(self, x, y, z):
                 |        self.x = x
                 |        self.y = y
+                |        w = 'johnie'
+                |
                 |a = A(3,"ahoj", "svet")
         """)
         node = ast.parse(code, mode = 'exec')
         parser = Parser()
         module_scope = parser.eval_code(node)
         a = module_scope.resolve('a')
-        self.assertIsNum(a.scope['x'].node)
-        self.assertIsStr(a.scope['y'].node)
+        self.assertEqual(len(parser.problems), 0)
+        self.assertIsNum(a.scope['x'])
+        self.assertIsStr(a.scope['y'])
+        self.assertNotIn('w', a.scope)
+        self.assertNotIn('z', a.scope)
         self.assertEqual(a.scope.resolve('z'),None)
 
     def test_override_setattr(self):
@@ -227,8 +233,9 @@ class TestInfer(unittest.TestCase): #{{{
         parser = Parser()
         module_scope = parser.eval_code(node)
         a = module_scope.resolve('a')
-        self.assertIsNum(a.scope['x'].node)
-        self.assertIsStr(a.scope['z'].node)
+        self.assertEqual(len(parser.problems), 0)
+        self.assertIsNum(a.scope['x'])
+        self.assertIsStr(a.scope['z'])
 
     def test_method_lookup(self):
         code = makecode("""
@@ -241,35 +248,62 @@ class TestInfer(unittest.TestCase): #{{{
 
             |a = A('jozo')
             |b = a.get_x()
-            |getx = a.get_x
             |a = A(3)
             |c = a.get_x()
         """)
         node = ast.parse(code, mode = 'exec')
         parser = Parser()
         module_scope = parser.eval_code(node)
+        self.assertEqual(len(parser.problems), 0)
         a = module_scope.resolve('a')
         A = module_scope.resolve('A')
         self.assertNotIn('get_x', a.scope)
         self.assertIn('get_x', A.scope)
         b = module_scope.resolve('b')
         c = module_scope.resolve('c')
-        getx = module_scope.resolve('getx')
-        self.assertIsStr(b.node)
-        self.assertIsNum(c.node)
-        self.assertEqual(getx.kind, 'func')
+        self.assertIsStr(b)
+        self.assertIsNum(c)
+
+    def test_class_closure(self):
+        code = makecode("""
+            |class A:
+            |    def __init__(self, x):
+            |        self.x = x
+
+            |    def get_x(self):
+            |        return self.x
+
+            |a = A('jozo')
+            |getx = a.get_x
+            |getx_class1 = A.get_x
+            |getx_class2 = A.get_x
+            |x1 = getx()
+            |x2 = getx_class1()
+            |x3 = getx_class2(a)
+        """)
+        node = ast.parse(code, mode = 'exec')
+        parser = Parser()
+        module_scope = parser.eval_code(node)
+        self.assertEqual(1, len(parser.problems))
+        self.assertEqual('getx_class1', parser.problems[0].symbol)
+        x1 = module_scope.resolve('x1')
+        x3 = module_scope.resolve('x3')
+        self.assertIsStr(x1)
+        self.assertIsStr(x3)
 
     def test_inheritance(self):
         code = makecode("""
            |class A:
            |    def __init__(self):
            |        pass
+           |
            |    def get_x(self):
            |        return self.x
 
            |class B(A):
            |    def __init__(self):
            |        pass
+           |
            |    def get_y(self):
            |        return self.y
 
@@ -280,9 +314,10 @@ class TestInfer(unittest.TestCase): #{{{
         node = ast.parse(code, mode = 'exec')
         parser = Parser()
         module_scope = parser.eval_code(node)
+        self.assertEqual(len(parser.problems), 0)
         b = module_scope.resolve('b')
-        self.assertIsNum(b.scope['y'].node)
-        self.assertIsStr(b.scope['x'].node)
+        self.assertIsNum(b.scope['y'])
+        self.assertIsStr(b.scope['x'])
         self.assertEqual(b.resolve('get_x', 'class').kind, 'func')
 
 #}}}
@@ -295,6 +330,7 @@ class TestWarnings(unittest.TestCase): #{{{
             |    def __init__(self, x, y):
             |        self.x = x
             |        self.y = y
+            |
             |a = A(3,4)
             |a.x = a.z
             |a.z = a.x
@@ -317,6 +353,7 @@ class TestWarnings(unittest.TestCase): #{{{
             |
             |    def fun1(self):
             |        return self.x+self.y
+            |
             |a = A(3,4)
             |a.z = a.fun1()
             |a.gun1()
@@ -332,6 +369,7 @@ class TestWarnings(unittest.TestCase): #{{{
         node = ast.parse(code, mode = 'exec')
         parser = Parser()
         parser.eval_code(node)
+        print('aaaaaa', parser.problems)
         problem_symbols = {problem.symbol for problem in parser.problems}
         self.assertEqual(problem_symbols, {'gun1', 'gun3'})
 
@@ -348,23 +386,20 @@ class TestWarnings(unittest.TestCase): #{{{
             |a = A(1,2)
             |b = B()
             |c = C()
-            |#a = D()
+            |a = D()
 """)
 
         node = ast.parse(code, mode = 'exec')
         parser = Parser()
         parser.eval_code(node)
         problem_symbols = {problem.symbol for problem in parser.problems}
-        print(problem_symbols)
-        #self.assertEqual(problem_symbols, {'gun1', 'gun3'})
-
-
+        self.assertEqual(problem_symbols, {'C', 'D'})
 
 #}}}
 
 if __name__ == '__main__':
-    #run_all = True
-    run_all = False
+    run_all = True
+    #run_all = False
 
     if run_all:
         logger = logging.getLogger('')
@@ -372,5 +407,5 @@ if __name__ == '__main__':
         unittest.main()
     else:
         suite = unittest.TestSuite()
-        suite.addTest(TestWarnings('test_nonexistent_class'))
+        suite.addTest(TestInfer("test_class_closure"))
         unittest.TextTestRunner().run(suite)
