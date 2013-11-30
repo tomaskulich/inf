@@ -344,34 +344,34 @@ class TestWarnings(unittest.TestCase): #{{{
         problem_symbols = {problem.symbol for problem in parser.problems}
         self.assertEqual(problem_symbols, {'w', 'z'})
 
-    def test_nonexistent_function(self):
-        code = makecode("""
-            |class A:
-            |    def __init__(self, x, y):
-            |        self.x = x
-            |        self.y = y
-            |
-            |    def fun1(self):
-            |        return self.x+self.y
-            |
-            |a = A(3,4)
-            |a.z = a.fun1()
-            |a.gun1()
-            |a.fun2 = a.fun1
-            |a.fun2()
-            |# since the problem with nonexistent gun1 is already reported, gun1 and gun2 are to be considered as
-            |# any_type making all invocations and other manipulations with it legal
-            |a.gun2 = a.gun1
-            |a.gun2()
-            |a.gun3()
-""")
+#    def test_nonexistent_function(self):
+#        code = makecode("""
+#            |class A:
+#            |    def __init__(self, x, y):
+#            |        self.x = x
+#            |        self.y = y
+#            |
+#            |    def fun1(self):
+#            |        return self.x+self.y
+#            |
+#            |a = A(3,4)
+#            |a.z = a.fun1()
+#            |a.gun1()
+#            |a.fun2 = a.fun1
+#            |a.fun2()
+#            |# since the problem with nonexistent gun1 is already reported, gun1 and gun2 are to be considered as
+#            |# any_type making all invocations and other manipulations with it legal
+#            |a.gun2 = a.gun1
+#            |a.gun2()
+#            |a.gun3()
+#""")
 
-        node = ast.parse(code, mode = 'exec')
-        parser = Parser()
-        parser.eval_code(node)
-        print('aaaaaa', parser.problems)
-        problem_symbols = {problem.symbol for problem in parser.problems}
-        self.assertEqual(problem_symbols, {'gun1', 'gun3'})
+#        node = ast.parse(code, mode = 'exec')
+#        parser = Parser()
+#        parser.eval_code(node)
+#        print('aaaaaa', parser.problems)
+#        problem_symbols = {problem.symbol for problem in parser.problems}
+#        self.assertEqual(problem_symbols, {'gun1', 'gun3'})
 
     def test_nonexistent_class(self):
         code = makecode("""
