@@ -40,6 +40,11 @@ def logentry(fn):
     return _f
 
 
+class ReturnException(Exception):
+
+    def __init__(self, res):
+        self.res=res
+
 class Problem:
     """encapsulates data about execution problem, that may occur (such as unknown attribute)"""
     def __init__(self, node = None, message = None, symbol = None):
@@ -65,6 +70,20 @@ class Parser:
        main parser method is eval_code. exec_* methods are used to process individual ast nodes.
     """
     def __init__(self):
+        self.specials = {}
+        self.modules = []
+        self.problems = []
+
+        f = open("externs.py", "r")
+        source = f.read()
+        f.close()
+        node = ast.parse(source, filename = 'externs.py', mode = 'exec')
+        logger.info('parsing externs')
+        self.extern_scope = Scope(is_root = True)
+        self.root_scope = Scope(parent = self.extern_scope)
+        self.eval_code(node, self.extern_scope)
+        logger.info('!!!externs parsed')
+        
         self.modules = []
         self.problems = []
 
@@ -74,6 +93,7 @@ class Parser:
 
     @logentry
     def exec_BinOp(self, node, scope):
+        #TODO: ostatne operatory
         op_dict = {ast.Add: '__add__',
                 ast.Div: '__div__'}
         left_type = self.eval_code(node.left, scope)
@@ -92,14 +112,16 @@ class Parser:
 
     @logentry
     def exec_ClassDef(self, node, scope):
-        assert(isinstance(node, ast.AST))
         class_scope = Scope(parent = scope)
+        scope[node.name] = Typez(kind = 'class', node = node, scope = class_scope)
         for _node in node.body:
             self.eval_code(_node, class_scope)
         bases = [self.eval_code(base, scope) for base in node.bases]
-        scope[node.name] = Typez(kind = 'class', node = node, bases = bases, scope = class_scope,
-                klass_name = node.name)
-
+        obj = self.extern_scope['object']
+        bases.append(obj)
+        class_scope['__bases__'] = bases
+        
+    
     @logentry
     def exec_Assign(self, node, scope):
         #TODO cover the case when having multiple targets such as a = b = 3
@@ -124,11 +146,11 @@ class Parser:
 
     @logentry
     def exec_Num(self, node, scope):
-        return Typez(kind = 'obj', node = node, value = node.n, klass_name = 'num')
+        return Typez(kind = 'obj', node = node, value = node.n, __class__ = self.extern_scope['num'])
 
     @logentry
     def exec_Str(self, node, scope):
-        return Typez(kind = 'obj', node = node, value = node.s, klass_name = 'str')
+        return Typez(kind = 'obj', node = node, value = node.s, __class__ = self.extern_scope['str'])
 
     @logentry
     def exec_List(self, node, scope):
@@ -150,7 +172,7 @@ class Parser:
         scope.
 
         """
-        if fun_type == typez.inf_setattr:
+        if fun_type == self.extern_scope['inf_setattr']:
             attr = args[1]
             if isinstance(attr, Typez) and isinstance(attr.value, str):
                 attr = attr.value
@@ -162,7 +184,7 @@ class Parser:
         else:
             fun_scope = scope
         def_args = fun_type.node.args.args
-        #binding arguments to their values; for now it only works with positional arguments
+        #TODO binding arguments to their values; for now it only works with positional arguments
         if len(args) != len(def_args):
             symbol = not_none(safe_resolve(node, 'func.attr'), safe_resolve(node, 'func.id'))
             self.warn(node, symbol = symbol, message = 'bad number of arguments (%d given, %d expected)'%(len(args), len(def_args)))
@@ -171,14 +193,16 @@ class Parser:
                 fun_scope[arg.arg] = args[i]
             else:
                 fun_scope[arg.arg] = any_type
-        for _node in fun_type.node.body:
-            res = self.eval_code(_node, fun_scope)
-            if res is not None:
-                return res
+        try:
+            for _node in fun_type.node.body:
+                self.eval_code(_node, fun_scope)
+        except ReturnException as e:
+            return e.res
         if fun_type.kind == 'class':
             return args[0]
 
     def exec_IfExp(test, body, orelse):
+        #TODO
         pass
 
     def exec_Call(self, node, scope):
@@ -226,16 +250,15 @@ class Parser:
 
     @logentry
     def exec_Module(self, node, scope):
-        module_scope = Scope(parent = scope)
         for _node in node.body:
-                self.eval_code(_node, module_scope)
+            self.eval_code(_node, scope)
 
-        return module_scope
 
 
     @logentry
     def exec_Return(self, node, scope):
-        return self.eval_code(node.value, scope)
+        res = self.eval_code(node.value, scope)
+        raise ReturnException(res)
 
     def exec_Name(self, node, scope):
         consts = ['None', 'True', 'False']
@@ -256,9 +279,9 @@ class Parser:
         #we first try 'straight' resolution of the attribute
         res = _type.resolve(node.attr, 'straight')
         if res:
-            res.is_method = False
-            res.self_obj = None
-            print('straight resolution', node.attr)
+            #res.is_method = False
+            #res.self_obj = None
+            #print('straight resolution', node.attr)
             return res
         else:
             res = _type.resolve(node.attr, 'class')
@@ -267,13 +290,13 @@ class Parser:
                 res = res.clone()
                 res.is_method = True
                 res.self_obj = _type
-                print('class resolution', node.attr, res, id(res), res.is_method)
+                #print('class resolution', node.attr, res, id(res), res.is_method)
                 return res
             else:
                 self.warn(node, message = 'nonexistent_attribute', symbol = node.attr)
                 return any_type
 
-    def eval_code(self, node, scope = None):
+    def eval_code(self, node, scope):
         """
           main method of the parser, it executes code under certain node within the given scope (if
           the scope is not given, we use typez.extern_scope as a highest scope possible). It returns
@@ -283,17 +306,16 @@ class Parser:
           are doing only minimum ammount of job to correctly cover the execution of the specific piece of
           code, recursively using eval_code to evaluate values of their children nodes.
         """
-        if scope is None:
-            scope = typez.extern_scope
         name = 'exec_'+node.__class__.__name__
         handler = Parser.__dict__[name]
         return handler(self, node, scope)
 
+    def eval_in_root(self, node):
+        return self.eval_code(node, self.root_scope)
 
-typez.load_externs()
 
 if __name__ == '__main__':
-    pass
+    p = Parser()
 
                 
 

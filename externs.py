@@ -20,10 +20,7 @@ class object:
     def __setattr__(self, name, value):
         return inf_setattr(self, name, value)
     
-    def umriumri():
-        pass
-
-class num(inf_object):
+class num(object):
 
     def __add__(self,x):
         return 0
@@ -34,24 +31,12 @@ class num(inf_object):
     def __mul__(self,x):
         return 0
 
-#inf_num.__name__ = 'num'
+class str(object):
 
 
-class str(inf_object):
     def __add__(self,x):
         return ""
 
-#inf_str.__name__= 'str'
+str.__name__ = "str"
+num.__name__ = "num"
 
-#class inf_list(inf_object):
-#
-#    def __init__(self):
-#        pass
-#
-#    def getattr(self, attr):
-#        pass
-#
-#    def setattr(self, attr, val):
-#        pass
-
-#Str_.original_name="str"
